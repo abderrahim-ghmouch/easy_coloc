@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec49",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102215",
+                        "sidebar-dark": "#0a140d",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<title>My Flatshares History - EasyColoc</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 flex-shrink-0 bg-sidebar-dark border-r border-primary/10 flex flex-col z-50 overflow-y-auto">
+<div class="p-6">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">home_work</span>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight">EasyColoc</h2>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-medium">Expenses</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-medium">Settlements</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-background-dark font-bold shadow-lg shadow-primary/20 transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span>My Flatshares</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-medium">Profile</span>
+</a>
+</nav>
+<div class="p-4 border-t border-primary/10 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+<button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-all group">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-medium">Logout</span>
+</button>
+</div>
+</aside>
+<div class="flex-1 flex flex-col h-screen overflow-y-auto">
+<header class="flex items-center justify-between border-b border-primary/10 px-8 py-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-40">
+<div class="flex items-center gap-4 flex-1">
+<label class="flex flex-col min-w-40 h-10 max-w-md flex-1">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-slate-200/50 dark:bg-primary/5 border border-transparent focus-within:border-primary/30 transition-all">
+<div class="text-slate-500 dark:text-primary/60 flex items-center justify-center pl-4">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full border-none bg-transparent focus:outline-0 focus:ring-0 h-full placeholder:text-slate-500 dark:placeholder:text-primary/40 px-4 text-sm" placeholder="Search flatshares..."/>
+</div>
+</label>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-200 dark:bg-primary/10 text-slate-700 dark:text-slate-100 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCKZ0CDchOvnuAnuqD_u7OYIKBGHFIBs17QstWNP4_0HhT_y1epelG8K8oxfOl0NMXYLlLQpKatb-rLAUbNa_vT27p8ueJvKoaj1YG0Idh-q1S6vBpQRCMl3Nkqx9nGjAYlcpENi3B2Nt-QqvVMLqOXT-r2jyPaawBKHlYgUkjgIH5Wf2vjF6EB-29NJ3JdU0DCoJtwRK0jdTyB92zsWN45lna_dmZEIGFz9ZweW443L3saiIEWDU2FRKjSqgVmMrRFnSWtVglvwZA");'></div>
+</div>
+</header>
+<main class="flex-1 p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full">
+<div class="flex flex-col gap-1">
+<h1 class="text-3xl font-extrabold tracking-tight">My Flatshares</h1>
+<p class="text-slate-500 dark:text-primary/60">Manage your current and past residential histories</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-slate-100 dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-2xl p-6 shadow-xl flex flex-col gap-5 hover:border-primary/40 transition-all relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4">
+<span class="bg-primary/20 text-primary text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                            Active
+                        </span>
+</div>
+<div class="flex flex-col gap-1 mt-2">
+<h3 class="text-xl font-bold group-hover:text-primary transition-colors">The Green Villa</h3>
+<p class="text-sm text-slate-500 dark:text-primary/60 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                            Jan 2022 - Present
+                        </p>
+</div>
+<div class="grid grid-cols-2 gap-4 py-4 border-y border-slate-200 dark:border-primary/10">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Members</span>
+<div class="flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-base">group</span>
+                                4 Members
+                            </div>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Final Balance</span>
+<div class="flex items-center gap-1 font-bold text-amber-500">
+<span class="material-symbols-outlined text-base">pending_actions</span>
+                                Pending 12€
+                            </div>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">dashboard</span>
+                        Enter Dashboard
+                    </button>
+</div>
+<div class="bg-slate-100 dark:bg-primary/5 border border-slate-200 dark:border-primary/10 rounded-2xl p-6 shadow-sm flex flex-col gap-5 opacity-80 hover:opacity-100 transition-all group">
+<div class="absolute top-0 right-0 p-4">
+<span class="bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                            Left
+                        </span>
+</div>
+<div class="flex flex-col gap-1 mt-2">
+<h3 class="text-xl font-bold">Downtown Loft</h3>
+<p class="text-sm text-slate-500 dark:text-primary/60 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                            June 2020 - Dec 2021
+                        </p>
+</div>
+<div class="grid grid-cols-2 gap-4 py-4 border-y border-slate-200 dark:border-primary/10">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Members</span>
+<div class="flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-base">group</span>
+                                3 Members
+                            </div>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Final Balance</span>
+<div class="flex items-center gap-1 font-bold text-primary">
+<span class="material-symbols-outlined text-base">check_circle</span>
+                                Settled
+                            </div>
+</div>
+</div>
+<button class="w-full border border-slate-300 dark:border-primary/20 hover:bg-primary/10 hover:text-primary text-slate-600 dark:text-slate-300 font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">history</span>
+                        View History
+                    </button>
+</div>
+<div class="bg-slate-100 dark:bg-primary/5 border border-slate-200 dark:border-primary/10 rounded-2xl p-6 shadow-sm flex flex-col gap-5 opacity-80 hover:opacity-100 transition-all group">
+<div class="absolute top-0 right-0 p-4">
+<span class="bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                            Left
+                        </span>
+</div>
+<div class="flex flex-col gap-1 mt-2">
+<h3 class="text-xl font-bold">Sunrise Apartment</h3>
+<p class="text-sm text-slate-500 dark:text-primary/60 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                            Feb 2019 - May 2020
+                        </p>
+</div>
+<div class="grid grid-cols-2 gap-4 py-4 border-y border-slate-200 dark:border-primary/10">
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Members</span>
+<div class="flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-base">group</span>
+                                2 Members
+                            </div>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Final Balance</span>
+<div class="flex items-center gap-1 font-bold text-primary">
+<span class="material-symbols-outlined text-base">check_circle</span>
+                                Settled
+                            </div>
+</div>
+</div>
+<button class="w-full border border-slate-300 dark:border-primary/20 hover:bg-primary/10 hover:text-primary text-slate-600 dark:text-slate-300 font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">history</span>
+                        View History
+                    </button>
+</div>
+<div class="border-2 border-dashed border-slate-300 dark:border-primary/20 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-4 hover:border-primary/50 transition-all group cursor-pointer">
+<div class="size-14 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">add_home</span>
+</div>
+<div>
+<h3 class="text-lg font-bold">New Adventure?</h3>
+<p class="text-sm text-slate-500 dark:text-primary/40">Join a new flatshare or create your own</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-1 hover:underline">
+                        Start Here
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<footer class="mt-auto pt-12 text-center text-slate-400 text-sm">
+<div class="flex justify-center gap-6 mb-4">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Help Center</a>
+<a class="hover:text-primary transition-colors" href="#">Support</a>
+</div>
+                © 2024 EasyColoc. Built for harmonious living.
+            </footer>
+</main>
+</div>
+</div>
+
+</body></html>

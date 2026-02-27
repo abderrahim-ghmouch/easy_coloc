@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('colocations', function (Blueprint $table) {
+        Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('status');
-            $table->bigInteger('owner_id');
-            $table->foreign('owner_id')->references('id')->on('users');
+            $table->string('title');
+            $table->decimal('montant');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('colocation');
+        Schema::dropIfExists('table_expenses');
     }
 };

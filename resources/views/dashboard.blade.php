@@ -39,55 +39,9 @@
 
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
     <div class="flex h-screen overflow-hidden">
-        <aside class="w-64 flex-shrink-0 bg-sidebar-dark border-r border-primary/10 flex flex-col z-50 overflow-y-auto">
-            <div class="p-6">
-                <div class="flex items-center gap-3 text-primary">
-                    <span class="material-symbols-outlined text-3xl">home_work</span>
-                    <h2 class="text-white text-lg font-bold leading-tight tracking-tight">EasyColoc</h2>
-                </div>
-            </div>
-            <nav class="flex-1 px-4 space-y-2 mt-4">
-                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group"
-                    href="#">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <span class="font-medium">Dashboard</span>
-                </a>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group"
-                    href="#">
-                    <span class="material-symbols-outlined">account_balance_wallet</span>
-                    <span class="font-medium">Expenses</span>
-                </a>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group"
-                    href="#">
-                    <span class="material-symbols-outlined">receipt_long</span>
-                    <span class="font-medium">Settlements</span>
-                </a>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-background-dark font-bold shadow-lg shadow-primary/20 transition-all"
-                    href="#">
-                    <span class="material-symbols-outlined">history</span>
-                    <span>My Flatshares</span>
-                </a>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group"
-                    href="#">
-                    <span class="material-symbols-outlined">person</span>
-                    <span class="font-medium">Profile</span>
-                </a>
-            </nav>
-            <div class="p-4 border-t border-primary/10 space-y-2">
-                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-primary/10 hover:text-primary transition-all group"
-                    href="#">
-                    <span class="material-symbols-outlined">settings</span>
-                    <span class="font-medium">Settings</span>
-                </a>
-                <button
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-all group">
-                    <span class="material-symbols-outlined">logout</span>
-                    <span class="font-medium">Logout</span>
-                </button>
-            </div>
-        </aside>
+        <x-sidebar/>
         <div class="flex-1 flex flex-col h-screen overflow-y-auto">
-           
+
             <main class="flex-1 p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full">
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div class="flex flex-col gap-1">
@@ -102,22 +56,7 @@
                     </button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div
-                        class="bg-primary/10 border-2 border-primary/20 hover:border-primary/50 rounded-2xl p-6 shadow-xl flex flex-col items-center justify-center text-center gap-4 transition-all cursor-pointer group order-first md:order-none">
-                        <div
-                            class="size-16 rounded-full bg-primary text-background-dark flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform">
-                            <span class="material-symbols-outlined text-3xl font-bold">add</span>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Create Flatshare</h3>
-                            <p class="text-sm text-slate-500 dark:text-primary/60 mt-1">Ready for a new
-                                adventure?<br />Start a new colocation today.</p>
-                        </div>
-                        <button
-                            class="mt-2 px-6 py-2 bg-primary text-background-dark font-bold rounded-lg group-hover:shadow-md transition-all">
-                            Get Started
-                        </button>
-                    </div>
+              
                     <div
                         class="bg-slate-100 dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-2xl p-6 shadow-xl flex flex-col gap-5 hover:border-primary/40 transition-all relative overflow-hidden group">
                         <div class="absolute top-0 right-0 p-4">

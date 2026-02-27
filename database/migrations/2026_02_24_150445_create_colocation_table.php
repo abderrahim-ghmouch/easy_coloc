@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('colocations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('status');
+            $table->string('status')->default('active');
             $table->bigInteger('owner_id');
             $table->foreign('owner_id')->references('id')->on('users');
             $table->timestamps();

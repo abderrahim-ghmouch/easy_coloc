@@ -39,7 +39,7 @@
 
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
     <div class="flex h-screen overflow-hidden">
-        <x-sidebar/>
+        <x-sidebar />
         <div class="flex-1 flex flex-col h-screen overflow-y-auto">
 
             <main class="flex-1 p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full">
@@ -49,14 +49,14 @@
                         <p class="text-slate-500 dark:text-primary/60">Manage your current and past residential
                             histories</p>
                     </div>
-                    <button
-                        class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-6 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+                    <button method="POST" action= type="button" onclick="toggleModal('colocationModal')"
+                        class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-6 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-95">
                         <span class="material-symbols-outlined">add_circle</span>
                         Create New Flatshare
                     </button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              
+
                     <div
                         class="bg-slate-100 dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-2xl p-6 shadow-xl flex flex-col gap-5 hover:border-primary/40 transition-all relative overflow-hidden group">
                         <div class="absolute top-0 right-0 p-4">
@@ -188,5 +188,56 @@
             </main>
         </div>
     </div>
+    <div id="colocationModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="bg-sidebar-dark w-full max-w-md p-8 rounded-2xl border border-primary/20 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-primary">New Flatshare</h3>
+                <button onclick="toggleModal('colocationModal')" class="text-slate-400 hover:text-white">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form method="POST" route="{{ route('colocation.store') }}" class="flex flex-col gap-4">
+                @csrf
+
+                <div>
+
+                    <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Flatshare
+                        Name</label>
+                    <input type="text" name="title" required placeholder="e.g. The Green Villa"
+                        class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all">
+                </div>
+
+                <div class="flex gap-3 mt-4">
+                    <button type="submit" onclick="toggleModal('colocationModal')"
+                        class="flex-1 px-4 py-3 text-slate-400 font-bold hover:text-white transition-all">Cancel</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-3 bg-primary text-background-dark font-bold rounded-xl hover:bg-primary/90 transition-all">
+                        Create Now
+                    </button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+function toggleModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.toggle('hidden');
+        // Optional: Prevent scrolling on the body when modal is open
+        document.body.classList.toggle('overflow-hidden');
+    }
+}
+
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('colocationModal');
+    if (event.target === modal) {
+        toggleModal('colocationModal');
+    }
+});
+</script>
 </body>
+
 </html>

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('membeships', function (Blueprint $table) {
+        Schema::create('memberships', function (Blueprint $table) {
             $table->id();
             $table->enum('role',['owner','member']);
             $table->foreignId('colocation_id')->constrained()->cascadeOnDelete();

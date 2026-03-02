@@ -21,11 +21,9 @@ return $this->belongsToMany(User::class, 'memberships')
                 ->withTimestamps();
     }
 
-        public function owner()
+    public function owner()
     {
-            return  $this->belongTo(Colocation::class,'memberships')
-        ->withPivot('role','left_at')
-        ->withTimestamps();
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
 

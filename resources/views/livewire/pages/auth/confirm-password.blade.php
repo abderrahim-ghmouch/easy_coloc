@@ -33,28 +33,23 @@ $confirmPassword = function () {
 ?>
 
 <div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+    <div class="px-8 pt-10 pb-6 text-center">
+        <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Secure Area</h1>
+        <p class="text-slate-400">Please confirm your password to continue</p>
     </div>
 
-    <form wire:submit="confirmPassword">
+    <form wire:submit="confirmPassword" class="px-8 pb-10 space-y-6">
         <!-- Password -->
         <div>
             <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input wire:model="password"
-                          id="password"
-                          class="block mt-1 w-full"
-                          type="password"
-                          name="password"
-                          required autocomplete="current-password" />
-
+            <x-text-input wire:model="password" id="password" class="block mt-1 w-full h-12 bg-white/5 border-primary/20 focus:border-primary focus:ring-primary/20" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <div class="flex justify-end mt-4">
+        <div class="pt-2">
             <x-primary-button>
-                {{ __('Confirm') }}
+                <span>{{ __('Confirm Password') }}</span>
+                <span class="material-symbols-outlined text-xl">lock_open</span>
             </x-primary-button>
         </div>
     </form>

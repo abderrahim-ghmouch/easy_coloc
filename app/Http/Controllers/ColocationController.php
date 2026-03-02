@@ -7,6 +7,7 @@ use App\Models\Colocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class ColocationController extends Controller
 {
 
@@ -28,7 +29,13 @@ class ColocationController extends Controller
 
         return redirect()->route('dashboard');
     }
+    public function index()
+{
+    $colocations = auth::user()->Colocations;
 
-  
+    return view('dashboard', compact('colocations'));
+}
+
+
 }
 

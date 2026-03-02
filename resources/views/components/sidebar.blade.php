@@ -38,10 +38,13 @@
                     <span class="material-symbols-outlined">settings</span>
                     <span class="font-medium">Settings</span>
                 </a>
-                <button
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-all group">
-                    <span class="material-symbols-outlined">logout</span>
-                    <span class="font-medium">Logout</span>
-                </button>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-all group">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span class="font-medium">Logout</span>
+                    </button>
+                </form>
             </div>
         </aside>

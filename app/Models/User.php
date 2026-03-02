@@ -54,11 +54,9 @@ class User extends Authenticatable
     ->withTimestamps();
     }
 
-    public function owner()
+    public function ownedColocations()
     {
-            return  $this->belongTo(Colocation::class,'memberships')
-        ->withPivot('role','left_at')
-        ->withTimestamps();
+        return $this->hasMany(Colocation::class, 'owner_id');
     }
 
 }

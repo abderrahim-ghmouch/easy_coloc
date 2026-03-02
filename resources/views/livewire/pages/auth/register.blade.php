@@ -31,51 +31,56 @@ $register = function () {
     $this->redirect(route('dashboard', absolute: false), navigate: true);
 };
 ?>
-    <div>
+<div>
+    <div class="px-8 pt-10 pb-6 text-center">
+        <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Create account</h1>
+        <p class="text-slate-400">Join EasyColoc today</p>
+    </div>
 
-        <div class="px-8 pt-10 pb-6 text-center">
-            <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">Create account</h1>
-            <p class="mt-2 text-slate-500 dark:text-slate-400 font-normal">Join EasyColoc to manage your flatshare effortlessly</p>
+    <form wire:submit="register" class="px-8 pb-10 space-y-6">
+        <!-- Name -->
+        <div>
+            <x-input-label for="name" :value="__('Full Name')" />
+            <x-text-input wire:model="name" id="name" class="block mt-1 w-full h-12 bg-white/5 border-primary/20 focus:border-primary focus:ring-primary/20" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="John Doe" />
+            <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
+        <!-- Email Address -->
+        <div>
+            <x-input-label for="email" :value="__('Email')" />
+            <x-text-input wire:model="email" id="email" class="block mt-1 w-full h-12 bg-white/5 border-primary/20 focus:border-primary focus:ring-primary/20" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="name@example.com" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
 
-        <form wire:submit="register" class="px-8 pb-10 space-y-5">
+        <!-- Password -->
+        <div>
+            <x-input-label for="password" :value="__('Password')" />
+            <x-text-input wire:model="password" id="password" class="block mt-1 w-full h-12 bg-white/5 border-primary/20 focus:border-primary focus:ring-primary/20" type="password" name="password" required autocomplete="new-password" placeholder="••••••••" />
+            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Name</label>
-                <input wire:model="name" class="w-full bg-background-light dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg h-12 px-4 text-sm focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="Enter your name" type="text"/>
-                @error('name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
-            </div>
+        <!-- Confirm Password -->
+        <div>
+            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full h-12 bg-white/5 border-primary/20 focus:border-primary focus:ring-primary/20" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="••••••••" />
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Email Address</label>
-                <input wire:model="email" class="w-full bg-background-light dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg h-12 px-4 text-sm focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="alex@example.com" type="email"/>
-                @error('email') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
-            </div>
+        <div class="pt-2">
+            <x-primary-button>
+                <span>{{ __('Create Account') }}</span>
+                <span class="material-symbols-outlined text-xl">person_add</span>
+            </x-primary-button>
+        </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Password</label>
-                <input wire:model="password" class="w-full bg-background-light dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg h-12 px-4 text-sm focus:ring-2 focus:ring-primary outline-none transition-all" type="password"/>
-                @error('password') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
-            </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Confirm Password</label>
-                <input wire:model="password_confirmation" class="w-full bg-background-light dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg h-12 px-4 text-sm focus:ring-2 focus:ring-primary outline-none transition-all" type="password"/>
-            </div>
-
-            <button class="w-full bg-primary hover:bg-opacity-90 text-background-dark h-12 rounded-lg font-bold text-base shadow-lg shadow-primary/20 transition-all" type="submit">
-                Create Account
-            </button>
-
-            <div class="pt-4 text-center">
-                <p class="text-sm text-slate-600 dark:text-slate-400">
-                    Already have an account?
-                    <a href="{{ route('login') }}" wire:navigate class="text-primary font-bold hover:underline ml-1 inline-flex items-center gap-1">
-                        Back to login
-                    </a>
-                </p>
-            </div>
-        </form>
-    </div>
+        <div class="pt-6 text-center border-t border-white/5">
+            <p class="text-sm text-slate-500">
+                Already have an account?
+                <a href="{{ route('login') }}" wire:navigate class="text-primary font-bold hover:text-primary/80 transition-colors ml-1">
+                    Sign in here
+                </a>
+            </p>
+        </div>
+    </form>
+</div>
 

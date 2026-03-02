@@ -67,14 +67,6 @@
             @endforelse
         </div>
 
-        <footer class="mt-auto pt-12 text-center text-slate-400 text-sm">
-            <div class="flex justify-center gap-6 mb-4">
-                <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                <a class="hover:text-primary transition-colors" href="#">Help Center</a>
-                <a class="hover:text-primary transition-colors" href="#">Support</a>
-            </div>
-            © 2024 EasyColoc. Built for harmonious living.
-        </footer>
     </div>
 
     <!-- Modal for creating colocation -->

@@ -55,10 +55,6 @@
                     {{ $slot }}
                 </div>
 
-                <!-- Simple Footer -->
-                <p class="mt-8 text-center text-slate-500 text-sm">
-                    © 2024 EasyColoc. All rights reserved.
-                </p>
             </div>
         </div>
     </body>

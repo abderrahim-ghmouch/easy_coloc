@@ -117,12 +117,6 @@
                 </section>
             </main>
 
-            <!-- Footer -->
-            <footer class="py-12 border-t border-primary/5">
-                <div class="max-w-7xl mx-auto px-6 text-center text-slate-500">
-                    <p>© 2024 EasyColoc. Built for harmonious living.</p>
-                </div>
-            </footer>
         </div>
     </body>
 </html>

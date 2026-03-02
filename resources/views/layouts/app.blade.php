@@ -11,7 +11,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
@@ -24,13 +24,14 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#13ec49",
-                        "background-light": "#f6f8f6",
-                        "background-dark": "#102215",
-                        "sidebar-dark": "#0a140d",
+                        "primary": "#018749", // Celtic Green
+                        "accent": "#fee101",   // Celtic Gold
+                        "background-dark": "#001a11", // Deep Forest
+                        "sidebar-dark": "#013220",    // Darkest Forest
                     },
                     fontFamily: {
-                        "display": ["Inter", "sans-serif"]
+                        "display": ["Limelight", "cursive"],
+                        "sans": ["Inter", "sans-serif"]
                     },
                     borderRadius: {
                         "DEFAULT": "0.25rem",
@@ -42,6 +43,10 @@
             },
         }
     </script>
+    <style>
+        h1, h2, h3 { font-family: 'Limelight', cursive; text-transform: uppercase; letter-spacing: 0.05em; }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
 
 <body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen antialiased">

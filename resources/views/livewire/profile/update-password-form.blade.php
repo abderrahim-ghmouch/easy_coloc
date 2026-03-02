@@ -40,12 +40,13 @@ $updatePassword = function () {
 ?>
 
 <section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Update Password') }}
+    <header class="mb-8">
+        <h2 class="text-2xl font-extrabold tracking-tight text-white flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary">lock_reset</span>
+            {{ __('Change Password') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600">
+        <p class="mt-2 text-slate-400">
             {{ __('Ensure your account is using a long, random password to stay secure.') }}
         </p>
     </header>

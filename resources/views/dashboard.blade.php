@@ -1,129 +1,85 @@
-<!DOCTYPE html>
-<html class="dark" lang="en">
+<x-app-layout>
+    <div class="flex flex-col gap-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div class="flex flex-col gap-1">
+                <h1 class="text-3xl font-extrabold tracking-tight">My Flatshares</h1>
+                <p class="text-slate-500 dark:text-primary/60">Manage your current and past residential histories</p>
+            </div>
+            <button type="button" onclick="toggleModal('colocationModal')"
+                class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-6 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-95">
+                <span class="material-symbols-outlined">add_circle</span>
+                Create New Flatshare
+            </button>
+        </div>
 
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#13ec49",
-                        "background-light": "#f6f8f6",
-                        "background-dark": "#102215",
-                        "sidebar-dark": "#0a140d",
-                    },
-                    fontFamily: {
-                        "display": ["Manrope"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
-    <title>My Flatshares History - EasyColoc</title>
-</head>
-
-<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
-    <div class="flex h-screen overflow-hidden">
-        <x-sidebar />
-        <div class="flex-1 flex flex-col h-screen overflow-y-auto">
-
-            <main class="flex-1 p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full">
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                    <div class="flex flex-col gap-1">
-                        <h1 class="text-3xl font-extrabold tracking-tight">My Flatshares</h1>
-                        <p class="text-slate-500 dark:text-primary/60">Manage your current and past residential
-                            histories</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($colocations as $colocation)
+                <div
+                    class="bg-white/5 border border-primary/20 rounded-2xl p-6 shadow-xl flex flex-col gap-5 hover:border-primary/40 transition-all relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4">
+                        <span
+                            class="bg-primary/20 text-primary text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary @if($colocation->status === 'active') animate-pulse @endif"></span>
+                            {{ ucfirst($colocation->status) }}
+                        </span>
                     </div>
-                    <button method="POST" action= type="button" onclick="toggleModal('colocationModal')"
-                        class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-6 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20 active:scale-95">
-                        <span class="material-symbols-outlined">add_circle</span>
-                        Create New Flatshare
+                    <div class="flex flex-col gap-1 mt-2">
+                        <h3 class="text-xl font-bold group-hover:text-primary transition-colors">{{ $colocation->name }}</h3>
+                        <p class="text-sm text-slate-500 dark:text-primary/60 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">calendar_today</span>
+                            {{ $colocation->created_at->format('M Y') }} - Present
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 py-4 border-y border-white/10">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Members</span>
+                            <div class="flex items-center gap-1 font-semibold">
+                                <span class="material-symbols-outlined text-base">group</span>
+                                {{ $colocation->members->count() }} Members
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Final Balance</span>
+                            <div class="flex items-center gap-1 font-bold text-primary">
+                                <span class="material-symbols-outlined text-base">check_circle</span>
+                                Settled
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        Enter Dashboard
                     </button>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @forelse($colocations as $colocation)
-                        <div
-                            class="bg-slate-100 dark:bg-primary/5 border border-slate-200 dark:border-primary/20 rounded-2xl p-6 shadow-xl flex flex-col gap-5 hover:border-primary/40 transition-all relative overflow-hidden group">
-                            <div class="absolute top-0 right-0 p-4">
-                                <span
-                                    class="bg-primary/20 text-primary text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-primary @if($colocation->status === 'active') animate-pulse @endif"></span>
-                                    {{ ucfirst($colocation->status) }}
-                                </span>
-                            </div>
-                            <div class="flex flex-col gap-1 mt-2">
-                                <h3 class="text-xl font-bold group-hover:text-primary transition-colors">{{ $colocation->name }}</h3>
-                                <p class="text-sm text-slate-500 dark:text-primary/60 flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-sm">calendar_today</span>
-                                    {{ $colocation->created_at->format('M Y') }} - Present
-                                </p>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 py-4 border-y border-slate-200 dark:border-primary/10">
-                                <div class="flex flex-col gap-1">
-                                    <span
-                                        class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Members</span>
-                                    <div class="flex items-center gap-1 font-semibold">
-                                        <span class="material-symbols-outlined text-base">group</span>
-                                        {{ $colocation->members->count() }} Members
-                                    </div>
-                                </div>
-                                <div class="flex flex-col gap-1">
-                                    <span class="text-[10px] uppercase font-bold text-slate-400 dark:text-primary/40">Final
-                                        Balance</span>
-                                    <div class="flex items-center gap-1 font-bold text-primary">
-                                        <span class="material-symbols-outlined text-base">check_circle</span>
-                                        Settled
-                                    </div>
-                                </div>
-                            </div>
-                            <button
-                                class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined">dashboard</span>
-                                Enter Dashboard
-                            </button>
-                        </div>
-                    @empty
-                        <div class="col-span-full py-20 text-center flex flex-col items-center gap-4">
-                            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                                <span class="material-symbols-outlined text-4xl">holiday_village</span>
-                            </div>
-                            <h3 class="text-2xl font-bold text-white">No Flatshares Yet</h3>
-                            <p class="text-slate-400 max-w-xs">Start your first adventure by creating a new flatshare!</p>
-                            <button onclick="toggleModal('colocationModal')" class="mt-4 text-primary font-bold hover:underline flex items-center gap-2">
-                                <span class="material-symbols-outlined">add</span>
-                                Create one now
-                            </button>
-                        </div>
-                    @endforelse
-                </div>
-                <footer class="mt-auto pt-12 text-center text-slate-400 text-sm">
-                    <div class="flex justify-center gap-6 mb-4">
-                        <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                        <a class="hover:text-primary transition-colors" href="#">Help Center</a>
-                        <a class="hover:text-primary transition-colors" href="#">Support</a>
+            @empty
+                <div class="col-span-full py-20 text-center flex flex-col items-center gap-4">
+                    <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-4xl">holiday_village</span>
                     </div>
-                    © 2024 EasyColoc. Built for harmonious living.
-                </footer>
-            </main>
+                    <h3 class="text-2xl font-bold text-white">No Flatshares Yet</h3>
+                    <p class="text-slate-400 max-w-xs">Start your first adventure by creating a new flatshare!</p>
+                    <button onclick="toggleModal('colocationModal')" class="mt-4 text-primary font-bold hover:underline flex items-center gap-2">
+                        <span class="material-symbols-outlined">add</span>
+                        Create one now
+                    </button>
+                </div>
+            @endforelse
         </div>
+
+        <footer class="mt-auto pt-12 text-center text-slate-400 text-sm">
+            <div class="flex justify-center gap-6 mb-4">
+                <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                <a class="hover:text-primary transition-colors" href="#">Help Center</a>
+                <a class="hover:text-primary transition-colors" href="#">Support</a>
+            </div>
+            © 2024 EasyColoc. Built for harmonious living.
+        </footer>
     </div>
+
+    <!-- Modal for creating colocation -->
     <div id="colocationModal"
-        class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm">
         <div class="bg-sidebar-dark w-full max-w-md p-8 rounded-2xl border border-primary/20 shadow-2xl">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold text-primary">New Flatshare</h3>
@@ -134,44 +90,38 @@
 
             <form method="POST" action="{{ route('colocation.store') }}" class="flex flex-col gap-4">
                 @csrf
-
                 <div>
-
-                    <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Flatshare
-                        Name</label>
+                    <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Flatshare Name</label>
                     <input type="text" name="title" required placeholder="e.g. The Green Villa"
                         class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all">
                 </div>
 
                 <div class="flex gap-3 mt-4">
-                    <button type="submit" onclick="toggleModal('colocationModal')"
+                    <button type="button" onclick="toggleModal('colocationModal')"
                         class="flex-1 px-4 py-3 text-slate-400 font-bold hover:text-white transition-all">Cancel</button>
                     <button type="submit"
                         class="flex-1 px-4 py-3 bg-primary text-background-dark font-bold rounded-xl hover:bg-primary/90 transition-all">
                         Create Now
                     </button>
-
                 </div>
             </form>
         </div>
     </div>
+
     <script>
-function toggleModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.toggle('hidden');
-        // Optional: Prevent scrolling on the body when modal is open
-        document.body.classList.toggle('overflow-hidden');
-    }
-}
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.toggle('hidden');
+                document.body.classList.toggle('overflow-hidden');
+            }
+        }
 
-window.addEventListener('click', function(event) {
-    const modal = document.getElementById('colocationModal');
-    if (event.target === modal) {
-        toggleModal('colocationModal');
-    }
-});
-</script>
-</body>
-
-</html>
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('colocationModal');
+            if (event.target === modal) {
+                toggleModal('colocationModal');
+            }
+        });
+    </script>
+</x-app-layout>

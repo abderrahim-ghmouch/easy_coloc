@@ -10,6 +10,14 @@ Route::get('dashboard', [ColocationController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::get('colocation/{colocation}', [ColocationController::class, 'show'])
+    ->middleware(['auth', 'verified'])
+    ->name('colocation.show');
+
+Route::delete('colocation/{colocation}', [ColocationController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])
+    ->name('colocation.destroy');
+
 Route::post('dashboard', [ColocationController::class, 'store'])->name('colocation.store');
 
 Route::view('profile', 'profile')

@@ -1,19 +1,15 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\Colocation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
 class ColocationController extends Controller
 {
-
     public function store(Request $request)
     {
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
         ]);
@@ -24,18 +20,32 @@ class ColocationController extends Controller
             'owner_id' => Auth::user()->id,
         ]);
 
-
         $colocation->members()->attach(Auth::user()->id, ['role' => 'owner']);
 
         return redirect()->route('dashboard');
     }
+
+    public function show(Colocation $colocation)
+    {
+        
+        return view('colocation.show', compact('colocation'));
+    }
+
+    public function destroy(Colocation $colocation)
+    {
+        if (Auth::user()->id !== $colocation->owner_id) {
+            abort(403);
+        }
+
+        $colocation->delete();
+
+        return redirect()->route('dashboard');
+    }
+
     public function index()
-{
-    $colocations = auth::user()->Colocations;
+    {
+        $colocations = Auth::user()->Colocations;
 
-    return view('dashboard', compact('colocations'));
+        return view('dashboard', compact('colocations'));
+    }
 }
-
-
-}
-

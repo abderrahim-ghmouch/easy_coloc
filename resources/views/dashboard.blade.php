@@ -46,11 +46,11 @@
                             </div>
                         </div>
                     </div>
-                    <button
+                    <a href="{{ route('colocation.show', $colocation) }}" wire:navigate
                         class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
                         <span class="material-symbols-outlined">dashboard</span>
                         Enter Dashboard
-                    </button>
+                    </a>
                 </div>
             @empty
                 <div class="col-span-full py-20 text-center flex flex-col items-center gap-4">

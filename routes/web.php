@@ -4,8 +4,13 @@ use Illuminate\Support\Facades\Route;
 use app\Http\Controllers\Colocation;
 use App\Http\Controllers\ColocationController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ExpenseController;
 
 Route::view('/', 'welcome');
+
+Route::post('colocation/{colocation}/expenses', [ExpenseController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('expenses.store');
 
 Route::get('dashboard', [ColocationController::class, 'index'])
     ->middleware(['auth', 'verified'])

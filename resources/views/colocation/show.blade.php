@@ -27,7 +27,7 @@
             
             <div class="flex items-center gap-3">
                 @if(auth()->user()->id === $colocation->owner_id)
-                    <form action="{{ route('colocation.destroy', $colocation) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this colocation?')">
+                    <form action="{{ route('colocation.destroy', $colocation) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="bg-red-500/10 border border-red-500/20 text-red-500 font-bold px-6 py-3 rounded-xl hover:bg-red-500 hover:text-white transition-all flex items-center gap-2">

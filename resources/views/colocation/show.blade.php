@@ -272,12 +272,6 @@
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Description (Optional)</label>
-                    <textarea name="description" rows="3" placeholder="Add more details..."
-                        class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all"></textarea>
-                </div>
-
                 <div class="mt-8 flex justify-end gap-3">
                     <button type="button" onclick="toggleModal('addExpenseModal')"
                         class="px-6 py-3 text-slate-400 font-bold hover:text-white transition-all">Cancel</button>

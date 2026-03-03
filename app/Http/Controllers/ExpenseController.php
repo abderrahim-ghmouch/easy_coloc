@@ -22,7 +22,6 @@ class ExpenseController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'montant' => 'required|numeric|min:0.01',
-            'description' => 'nullable|string',
             'date' => 'required|date',
             'category' => 'nullable|string|max:100',
         ]);

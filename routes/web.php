@@ -24,6 +24,10 @@ Route::delete('colocation/{colocation}', [ColocationController::class, 'destroy'
     ->middleware(['auth', 'verified'])
     ->name('colocation.destroy');
 
+Route::post('colocation/{colocation}/invite', [ColocationController::class, 'invite'])
+    ->middleware(['auth', 'verified'])
+    ->name('colocation.invite');
+
 Route::post('dashboard', [ColocationController::class, 'store'])->name('colocation.store');
 
 Route::view('profile', 'profile')

@@ -48,4 +48,29 @@ class ColocationController extends Controller
 
         return view('dashboard', compact('colocations'));
     }
+
+    public function invite(Request $request, Colocation $colocation)
+    {
+        // Guard: only owner can invite
+        if (Auth::id() !== $colocation->owner_id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ], [
+            'email.exists' => 'No user found with this email address.'
+        ]);
+
+        $user = \App\Models\User::where('email', $validated['email'])->first();
+
+        // Check if user is already a member
+        if ($colocation->members->contains($user->id)) {
+            return back()->withErrors(['email' => 'This user is already a member of your flatshare.']);
+        }
+
+        $colocation->members()->attach($user->id, ['role' => 'member']);
+
+        return back()->with('success', 'User ' . $user->name . ' has been added successfully!');
+    }
 }

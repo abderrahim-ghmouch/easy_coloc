@@ -174,9 +174,11 @@
                         @endforeach
                     </div>
                     
-                    <div class="p-4 bg-white/5 border-t border-white/10 text-center text-sm font-bold text-primary hover:bg-primary/5 transition-all cursor-pointer">
-                        Invite New Member
-                    </div>
+                    @if(auth()->user()->id === $colocation->owner_id)
+                        <div onclick="toggleModal('inviteMemberModal')" class="p-4 bg-white/5 border-t border-white/10 text-center text-sm font-bold text-primary hover:bg-primary/5 transition-all cursor-pointer">
+                            Invite New Member
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Who owes who --}}
@@ -284,6 +286,37 @@
         </div>
     </div>
 
+    {{-- Invite Member Modal --}}
+    <div id="inviteMemberModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="bg-sidebar-dark w-full max-w-md p-8 rounded-2xl border border-primary/20 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-primary">Invite Member</h2>
+                <button onclick="toggleModal('inviteMemberModal')" class="text-slate-400 hover:text-white">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form action="{{ route('colocation.invite', $colocation) }}" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">User Email</label>
+                    <input type="email" name="email" required placeholder="friend@example.com"
+                        class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all">
+                    @error('email') <p class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="toggleModal('inviteMemberModal')"
+                        class="flex-1 px-4 py-3 text-slate-400 font-bold hover:text-white transition-all">Cancel</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-3 bg-primary text-background-dark font-bold rounded-xl hover:bg-primary/90 transition-all">
+                        Invite Now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function toggleModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -293,9 +326,13 @@
             }
         }
 
-        @if($errors->isNotEmpty())
+        @if($errors->hasAny(['title', 'montant', 'date', 'category']))
             document.addEventListener('DOMContentLoaded', function() {
                 toggleModal('addExpenseModal');
+            });
+        @elseif($errors->has('email'))
+            document.addEventListener('DOMContentLoaded', function() {
+                toggleModal('inviteMemberModal');
             });
         @endif
     </script>

@@ -26,8 +26,10 @@ return $this->belongsToMany(User::class, 'memberships')
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-
-
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class);
+    }
 }
 
 

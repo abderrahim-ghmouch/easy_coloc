@@ -26,7 +26,14 @@ rules([
 $register = function () {
     $validated = $this->validate();
     $validated['password'] = Hash::make($validated['password']);
-    event(new Registered($user = User::create($validated)));
+    
+    // Check if this is the first user
+    $isFirstUser = User::count() === 0;
+    $validated['is_admin'] = $isFirstUser;
+
+    $user = User::create($validated);
+
+    event(new Registered($user));
     Auth::login($user);
     $this->redirect(route('dashboard', absolute: false), navigate: true);
 };

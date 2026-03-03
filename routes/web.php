@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use app\Http\Controllers\Colocation;
 use App\Http\Controllers\ColocationController;
+use App\Http\Controllers\AdminController;
 
 Route::view('/', 'welcome');
 
@@ -28,5 +29,11 @@ Route::post('logout', function (\App\Livewire\Actions\Logout $logout) {
 
     return redirect('/');
 })->name('logout');
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/users/{user}/ban', [AdminController::class, 'ban'])->name('users.ban');
+    Route::post('/users/{user}/unban', [AdminController::class, 'unban'])->name('users.unban');
+});
 
 require __DIR__.'/auth.php';

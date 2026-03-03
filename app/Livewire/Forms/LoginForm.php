@@ -38,6 +38,14 @@ class LoginForm extends Form
             ]);
         }
 
+        if (Auth::user()->is_banned) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'form.email' => 'Your account has been banned. Please contact support.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

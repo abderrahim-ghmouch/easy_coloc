@@ -15,7 +15,7 @@ class ExpenseController extends Controller
     public function store(Request $request, Colocation $colocation)
     {
         // Guard: Check if the user is a member of this colocation
-        if (!$colocation->members->contains(Auth::user()->id)) {
+        if (!$colocation->members->contains('id', Auth::id())) {
             abort(403, 'You are not a member of this flatshare.');
         }
 
@@ -28,7 +28,7 @@ class ExpenseController extends Controller
         ]);
 
         $expense = new Expense($validated);
-        $expense->user_id = Auth::user()->id;
+        $expense->user_id = Auth::id();
         $expense->colocation_id = $colocation->id;
         $expense->save();
 

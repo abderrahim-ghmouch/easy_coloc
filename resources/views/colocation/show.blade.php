@@ -37,9 +37,8 @@
                     </form>
                 @endif
                 <button 
-                    x-data=""
-                    @click="$dispatch('open-modal', 'add-expense')"
-                    class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-6 py-3 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-primary/20">
+                    onclick="toggleModal('addExpenseModal')"
+                    class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-6 py-3 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95">
                     <span class="material-symbols-outlined">add</span>
                     Add Expense
                 </button>
@@ -224,64 +223,86 @@
         </div>
     </div>
 
-    {{-- Add Expense Modal --}}
-    <x-modal name="add-expense" :show="$errors->isNotEmpty()" maxWidth="lg" focusable>
-        <div class="p-8">
-            <h2 class="text-2xl font-extrabold flex items-center gap-3 mb-6">
-                <span class="material-symbols-outlined text-primary">add_circle</span>
-                Add New Expense
-            </h2>
+    {{-- Manual Modal Implementation --}}
+    <div id="addExpenseModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="bg-sidebar-dark w-full max-w-lg p-8 rounded-2xl border border-primary/20 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-extrabold flex items-center gap-3 text-primary">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    Add New Expense
+                </h2>
+                <button onclick="toggleModal('addExpenseModal')" class="text-slate-400 hover:text-white">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
 
             <form action="{{ route('expenses.store', $colocation) }}" method="POST" class="space-y-4">
                 @csrf
                 
                 <div>
-                    <x-input-label for="title" value="Title" />
-                    <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" placeholder="e.g. Groceries, Electricity bill" required autofocus />
-                    <x-input-error :messages="$errors->get('title')" class="mt-2" />
+                    <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Title</label>
+                    <input type="text" name="title" required placeholder="e.g. Groceries, Electricity bill"
+                        class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all">
+                    @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <x-input-label for="montant" value="Amount (€)" />
-                        <x-text-input id="montant" name="montant" type="number" step="0.01" class="mt-1 block w-full" placeholder="0.00" required />
-                        <x-input-error :messages="$errors->get('montant')" class="mt-2" />
+                        <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Amount (€)</label>
+                        <input type="number" name="montant" step="0.01" required placeholder="0.00"
+                            class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all">
+                        @error('montant') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <x-input-label for="date" value="Date" />
-                        <x-text-input id="date" name="date" type="date" class="mt-1 block w-full" value="{{ date('Y-m-d') }}" required />
-                        <x-input-error :messages="$errors->get('date')" class="mt-2" />
+                        <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Date</label>
+                        <input type="date" name="date" value="{{ date('Y-m-d') }}" required
+                            class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all">
+                        @error('date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 <div>
-                    <x-input-label for="category" value="Category" />
-                    <select id="category" name="category" class="mt-1 block w-full border-sidebar-light bg-sidebar-dark text-slate-200 focus:border-primary focus:ring-primary rounded-xl shadow-sm transition-all">
+                    <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Category</label>
+                    <select name="category" class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all appearance-none">
                         <option value="general">General</option>
                         <option value="food">Food & Groceries</option>
                         <option value="rent">Rent</option>
-                        <option value="utilities">Utilities (Water, Gas, Electricity)</option>
+                        <option value="utilities">Utilities</option>
                         <option value="other">Other</option>
                     </select>
-                    <x-input-error :messages="$errors->get('category')" class="mt-2" />
                 </div>
 
                 <div>
-                    <x-input-label for="description" value="Description (Optional)" />
-                    <textarea id="description" name="description" rows="3" class="mt-1 block w-full border-sidebar-light bg-sidebar-dark text-slate-200 focus:border-primary focus:ring-primary rounded-xl shadow-sm transition-all" placeholder="Add more details..."></textarea>
-                    <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                    <label class="block text-sm font-bold text-primary/60 mb-2 uppercase tracking-wider">Description (Optional)</label>
+                    <textarea name="description" rows="3" placeholder="Add more details..."
+                        class="w-full px-4 py-3 bg-background-dark border border-primary/20 rounded-xl text-white focus:ring-2 focus:ring-primary outline-none transition-all"></textarea>
                 </div>
 
                 <div class="mt-8 flex justify-end gap-3">
-                    <x-secondary-button x-on:click="$dispatch('close-modal', 'add-expense')">
-                        Cancel
-                    </x-secondary-button>
-
-                    <button type="submit" class="bg-primary hover:bg-primary/90 text-background-dark font-bold px-8 py-2 rounded-xl transition-all shadow-lg shadow-primary/20">
+                    <button type="button" onclick="toggleModal('addExpenseModal')"
+                        class="px-6 py-3 text-slate-400 font-bold hover:text-white transition-all">Cancel</button>
+                    <button type="submit"
+                        class="px-8 py-3 bg-primary text-background-dark font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
                         Record Expense
                     </button>
                 </div>
             </form>
         </div>
-    </x-modal>
+    </div>
+
+    <script>
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.toggle('hidden');
+                document.body.classList.toggle('overflow-hidden');
+            }
+        }
+
+        @if($errors->isNotEmpty())
+            document.addEventListener('DOMContentLoaded', function() {
+                toggleModal('addExpenseModal');
+            });
+        @endif
+    </script>
 </x-app-layout>

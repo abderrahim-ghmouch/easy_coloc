@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ColocationMember extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'colocation_id',
@@ -25,12 +27,10 @@ class ColocationMember extends Model
         return $this->belongsTo(Colocation::class);
     }
 
-
     public function createdExpenses(): HasMany
     {
         return $this->hasMany(Expense::class, 'creator_member_id');
     }
-
 
     public function debts(): HasMany
     {

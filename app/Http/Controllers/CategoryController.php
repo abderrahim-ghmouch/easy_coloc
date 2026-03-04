@@ -15,9 +15,6 @@ class CategoryController extends Controller
         $colocation = Colocation::findOrFail($colocationId);
         $currentMember = $colocation->members->firstWhere('user_id', Auth::id());
 
-        if (!$currentMember) {
-            return redirect()->route('colocation.index')->with('error', 'You are not a member of this colocation.');
-        }
 
         $categories = Category::where("colocation_id", $colocationId)->get();
         $is_active = $colocation->status == "ACTIVE" && is_null($currentMember->left_at);

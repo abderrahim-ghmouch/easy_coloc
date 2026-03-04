@@ -3,49 +3,39 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InvitationToken extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'email',
         'token',
         'expires_at',
-        'used_at',
         'colocation_id',
+        'used_at',
     ];
 
     protected $casts = [
         'expires_at' => 'datetime',
-        'used_at'    => 'datetime',
+        'used_at' => 'datetime',
     ];
 
-    public function scopeValid(Builder $query): Builder
+    public function scopeValid(Builder $query): void
     {
-        return $query
-            ->whereNull('used_at')
+        $query->whereNull('used_at')
             ->where('expires_at', '>', now());
     }
 
-    public function isExpired(): bool
+    public function markAsUsed(): bool
     {
-        return $this->expires_at->isPast();
+        return $this->update(['used_at' => now()]);
     }
 
-    public function isUsed(): bool
+    public function colocation(): BelongsTo
     {
-        return !is_null($this->used_at);
-    }
-
-    public function isValid(): bool
-    {
-        return ! $this->isUsed() && ! $this->isExpired();
-    }
-
-    public function markAsUsed(): void
-    {
-        $this->update([
-            'used_at' => now(),
-        ]);
+        return $this->belongsTo(Colocation::class);
     }
 }

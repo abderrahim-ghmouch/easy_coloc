@@ -40,13 +40,13 @@
         </div>
 
         <div class="flex items-center justify-between mt-8 gap-4">
-            <a class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 hover:text-white transition-colors" href="{{ route('login') }}">
-                {{ __('Existing Entity?') }}
+            <a class="text-xs font-semibold text-neutral-500 hover:text-white transition-colors" href="{{ route('login') }}">
+                {{ __('Already have an account?') }}
             </a>
 
             <div class="flex-1">
                 <x-primary-button>
-                    {{ __('Deploy Node') }}
+                    {{ __('Register') }}
                 </x-primary-button>
             </div>
         </div>

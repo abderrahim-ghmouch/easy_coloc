@@ -182,7 +182,7 @@ class ColocationController extends Controller
         ]);
 
         return redirect()->route("colocation.index")->with("success","You left the colocation successfully");
-    }
+}
 
     public function members(Colocation $colocation){
         $colocation->load(['members.createdExpenses', "members.user",'members.createdExpenses.creator.user', "owner"]);
@@ -220,7 +220,7 @@ class ColocationController extends Controller
         $is_active = $colocation->status == "ACTIVE" && is_null($colocation->members()->firstWhere('user_id', Auth::id())->left_at);
 
         return view("colocation.members", compact("members", "is_active", "colocation"));
-    }
+}
 
     public function removeMember(Colocation $colocation, ColocationMember $colocationMember){
         $owner_id = $colocation->members()->where("role", "Owner")->first()->id;
@@ -233,7 +233,7 @@ class ColocationController extends Controller
         ]);
 
         return redirect()->route("colocation.show", $colocation)->with("success","Member removed successfully");
-    }
+}
 
     public function markPaid(Colocation $colocation, ExpenseDetail $expenseDetail){
 

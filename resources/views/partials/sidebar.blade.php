@@ -7,7 +7,7 @@
         <div class="flex h-full flex-col px-6 py-8">
             <!-- Logo area -->
             <div class="mb-12">
-                <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                <a href="/" class="flex items-center gap-3 group">
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black font-display font-black text-xl shadow-lg shadow-white/10">
                         E
                     </div>
@@ -21,11 +21,6 @@
             <nav class="flex-1 space-y-2">
                 <p class="mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-600 px-2">Main Menu</p>
                 
-                <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-all {{ request()->routeIs('home') ? 'bg-white text-black shadow-lg shadow-white/5' : 'text-neutral-400 hover:bg-surface-dark hover:text-white' }}">
-                    <span class="material-symbols-outlined text-lg">home</span>
-                    Home
-                </a>
-
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-all {{ request()->routeIs('dashboard') ? 'bg-white text-black shadow-lg shadow-white/5' : 'text-neutral-400 hover:bg-surface-dark hover:text-white' }}">
                     <span class="material-symbols-outlined text-lg">dashboard</span>
                     Dashboard
@@ -33,7 +28,12 @@
 
                 <a href="{{ route('colocation.index') }}" class="flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-all {{ request()->routeIs('colocation.*') ? 'bg-white text-black shadow-lg shadow-white/5' : 'text-neutral-400 hover:bg-surface-dark hover:text-white' }}">
                     <span class="material-symbols-outlined text-lg">grid_view</span>
-                    Colocations
+                    My Colocations
+                </a>
+
+                <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium transition-all {{ request()->routeIs('profile.*') ? 'bg-white text-black shadow-lg shadow-white/5' : 'text-neutral-400 hover:bg-surface-dark hover:text-white' }}">
+                    <span class="material-symbols-outlined text-lg">settings</span>
+                    Profile Settings
                 </a>
 
                 @if (auth()->user()->role == 'ADMIN')
@@ -49,21 +49,21 @@
 
             <!-- User area -->
             <div class="mt-auto pt-8 border-t border-border-dark flex flex-col gap-4">
-                <div class="flex items-center gap-3 px-2">
-                    <div class="h-10 w-10 rounded-full border border-border-dark bg-surface-dark flex items-center justify-center text-xs font-bold text-white">
+                <div class="flex items-center gap-4 px-2">
+                    <div class="h-10 w-10 rounded-xl border border-border-dark bg-neutral-900 flex items-center justify-center text-xs font-bold text-white shadow-inner">
                         {{ substr(Auth::user()->name, 0, 1) }}
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-sm font-bold text-white">{{ Auth::user()->name }}</span>
-                        <span class="text-[10px] text-neutral-500 uppercase tracking-widest">{{ Auth::user()->role }}</span>
+                        <span class="text-sm font-bold text-white tracking-tight">{{ Auth::user()->name }}</span>
+                        <span class="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em]">{{ Auth::user()->role }}</span>
                     </div>
                 </div>
 
                 <form action="{{ route('logout') }}" method="post" class="w-full">
                     @csrf
-                    <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all">
+                    <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-xs font-bold text-red-500/80 hover:bg-red-500/10 hover:text-red-500 transition-all border border-transparent hover:border-red-500/20">
                         <span class="material-symbols-outlined text-lg">logout</span>
-                        Sign Out
+                        Logout
                     </button>
                 </form>
             </div>

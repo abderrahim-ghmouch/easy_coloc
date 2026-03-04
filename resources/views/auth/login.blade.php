@@ -32,17 +32,21 @@
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 hover:text-white transition-colors px-4" href="{{ route('password.request') }}">
-                    {{ __('Forgot credentials?') }}
-                </a>
-            @endif
+        <div class="mt-10 space-y-6">
+            <x-primary-button>
+                {{ __('Login') }}
+            </x-primary-button>
 
-            <div class="flex-1">
-                <x-primary-button>
-                    {{ __('Initialize Session') }}
-                </x-primary-button>
+            <div class="flex items-center justify-between gap-4">
+                <a class="text-xs font-semibold text-neutral-500 hover:text-white transition-colors" href="{{ route('register') }}">
+                    {{ __('Create an account') }}
+                </a>
+
+                @if (Route::has('password.request'))
+                    <a class="text-xs font-semibold text-neutral-500 hover:text-white transition-colors" href="{{ route('password.request') }}">
+                        {{ __('Forgot password?') }}
+                    </a>
+                @endif
             </div>
         </div>
     </form>

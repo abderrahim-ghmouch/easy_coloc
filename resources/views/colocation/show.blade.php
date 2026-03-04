@@ -35,119 +35,158 @@
             </div>
         </section>
 
-        <!-- Command Bar -->
-        <section class="flex flex-wrap items-center justify-between gap-6 p-6 rounded-2xl modern-border bg-surface-dark/20">
-            <div class="flex gap-4 flex-wrap">
-                <button @disabled(!$is_active) onclick="showAddExpenseModal()"
-                    class="btn-modern px-6 py-3 text-xs">
-                    <span class="material-symbols-outlined text-sm">add</span>
-                    Append Entry
-                </button>
-                @if ($is_owner)
-                    <button @disabled(!$is_active) onclick="showAddInvitationModal()"
-                        class="btn-outline px-6 py-3 text-xs">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 rounded bg-white/10 text-white text-[10px] font-bold uppercase tracking-widest border border-white/10">Group #{{ $colocation->id }}</span>
+                    <span class="px-3 py-1 rounded bg-emerald-500/10 text-emerald-500 text-[10px] font-bold uppercase tracking-widest border border-emerald-500/20">Active</span>
+                </div>
+                <h1 class="text-5xl md:text-6xl font-display font-black text-white tracking-tighter">{{ $colocation->name }}</h1>
+                <p class="text-lg text-neutral-400 font-body max-w-2xl leading-relaxed">{{ $colocation->description }}</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-4">
+                @if ($member->role === 'Owner')
+                    <button onclick="showInviteModal()" class="btn-outline px-6 py-3 text-xs bg-white text-black hover:bg-neutral-200 border-none group">
                         <span class="material-symbols-outlined text-sm">person_add</span>
-                        Grant Access
+                        <span>Invite Member</span>
                     </button>
-                    <a href="{{ route('colocation.category.index', $colocation->id) }}"
-                        class="btn-outline px-6 py-3 text-xs">
+                    <a href="{{ route('colocation.category.index', $colocation->id) }}" class="btn-outline px-6 py-3 text-xs">
                         <span class="material-symbols-outlined text-sm">category</span>
-                        Schema Categories
+                        <span>Categories</span>
                     </a>
                 @endif
+                <button onclick="showAddExpenseModal()" class="btn-modern px-8 py-3 text-xs">
+                    <span class="material-symbols-outlined text-sm">add</span>
+                    <span>Add Expense</span>
+                </button>
             </div>
-            <a href="{{ route('colocation.members', $colocation->id) }}"
-                class="text-[10px] font-bold text-neutral-400 hover:text-white transition-colors uppercase tracking-[0.2em] flex items-center gap-2">
-                View Infrastructure <span class="material-symbols-outlined text-xs">arrow_forward</span>
-            </a>
-        </section>
+        </div>
 
-        <!-- Dynamic Ledger -->
-        <section class="space-y-6">
-            <div class="flex items-center justify-between">
-                <h3 class="text-xl font-display font-bold text-white flex items-center gap-3">
-                    <span class="material-symbols-outlined text-neutral-500">receipt_long</span>
-                    Unit Ledger
-                </h3>
-                <div class="relative">
-                    <form action="" method="get" onchange="this.submit()">
-                        <input type="month" name="month-year" value="{{ request('month-year') }}"
-                            class="rounded-lg border border-border-dark bg-background-dark px-4 py-2 text-xs font-medium focus:border-white focus:ring-0 transition-colors"
-                            id="month-select" />
-                    </form>
-                </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <!-- Left Side: Stats & Members -->
+            <div class="lg:col-span-4 space-y-12">
+                <!-- Group Members -->
+                <section class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-500">Roommates</h3>
+                        <a href="{{ route('colocation.members', $colocation->id) }}" class="text-[10px] font-bold text-neutral-400 hover:text-white transition-colors underline underline-offset-4">View All</a>
+                    </div>
+                    
+                    <div class="grid gap-3">
+                        @foreach ($colocation->activeMembers->take(5) as $m)
+                            <div class="flex items-center justify-between p-4 glass modern-border rounded-2xl group transition-all hover:bg-white/[0.02]">
+                                <div class="flex items-center gap-4">
+                                    <div class="size-10 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center text-xs font-bold text-neutral-400">
+                                        {{ substr($m->user->name, 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <p class="text-sm font-bold text-white">{{ $m->user->name }}</p>
+                                            @if($m->role === 'Owner')
+                                                <span class="material-symbols-outlined text-[12px] text-white">verified</span>
+                                            @endif
+                                        </div>
+                                        <p class="text-[10px] text-neutral-500 font-medium">{{ $m->role }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs font-bold text-white">{{ $m->user->reputation }} rep</p>
+                                    <p class="text-[8px] uppercase tracking-widest text-neutral-600 font-bold">Trust Score</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+                
+                <!-- Quick Summary -->
+                <section class="p-8 rounded-3xl bg-neutral-950 border border-white/5 space-y-8 relative overflow-hidden">
+                    <div class="relative z-10 space-y-8">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-2">Total Budget Logged</p>
+                            <p class="text-4xl font-display font-black text-white">$ {{ number_format($colocation->expenses->sum('total_amount'), 2) }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-8 pt-8 border-t border-white/5">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1">Your Spending</p>
+                                <p class="text-xl font-display font-bold text-white">$ {{ number_format($member->expenses->sum('total_amount'), 2) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-500/50 mb-1">Settled</p>
+                                <p class="text-xl font-display font-bold text-white">$ {{ number_format($member->debts->where('status', 'PAID')->sum('amount'), 2) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
-            <div class="overflow-hidden rounded-2xl modern-border bg-surface-dark/30 backdrop-blur-sm">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-surface-dark/50 border-b border-border-dark">
-                            <th class="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Entry</th>
-                            <th class="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Category</th>
-                            <th class="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Amount</th>
-                            <th class="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Operator</th>
-                            <th class="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-border-dark font-body">
-                        @forelse ($expenses as $expense)
-                            <tr class="group hover:bg-white/[0.02] transition-colors">
-                                <td class="px-8 py-6 font-medium text-white">{{ $expense->title }}</td>
-                                <td class="px-8 py-6">
-                                    <span class="px-2 py-0.5 rounded border border-neutral-800 text-[8px] font-bold uppercase tracking-widest text-neutral-400 group-hover:border-neutral-700 transition-colors">
-                                        {{ $expense->category->name }}
-                                    </span>
-                                </td>
-                                <td class="px-8 py-6 font-display font-medium text-lg text-white">
-                                    {{ number_format($expense->amount, 2) }}€
-                                </td>
-                                <td class="px-8 py-6">
-                                    <div class="flex items-center gap-3 text-neutral-500 group-hover:text-neutral-300 transition-colors">
-                                        <div class="w-2 h-2 rounded-full border border-current"></div>
-                                        <span class="text-xs uppercase tracking-wider">{{ $expense->creator->user->name }}</span>
+            <!-- Right Side: Recent Activity & Debts -->
+            <div class="lg:col-span-8 space-y-12">
+                <!-- Group Debts / Settlements -->
+                <section class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-500">Money to Settle</h3>
+                        <div class="h-px flex-1 bg-white/5 mx-6"></div>
+                    </div>
+
+                    <div class="grid gap-4">
+                        @forelse ($colocation->expenses as $expense)
+                            @foreach ($expense->details as $detail)
+                                @if($detail->member_id == $member->id || $expense->creator_member_id == $member->id)
+                                    <div class="group flex flex-col sm:flex-row sm:items-center justify-between p-6 glass modern-border rounded-3xl transition-all hover:bg-white/[0.03]">
+                                        <div class="flex items-center gap-5">
+                                            <div class="size-12 rounded-2xl bg-neutral-900 flex items-center justify-center border border-white/5">
+                                                <span class="material-symbols-outlined text-neutral-500 group-hover:text-white transition-colors">
+                                                    @if($detail->status === 'PAID') check_circle @else pending @endif
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center gap-3">
+                                                    <h4 class="text-lg font-bold text-white">{{ $expense->description }}</h4>
+                                                    <span class="text-[10px] px-2 py-0.5 rounded border border-white/10 text-neutral-400">{{ $expense->category->name }}</span>
+                                                </div>
+                                                <p class="text-xs text-neutral-500 mt-1">
+                                                    @if($expense->creator_member_id == $member->id)
+                                                        <span class="text-emerald-500 font-bold">You are owed</span> by {{ $detail->member->user->name }}
+                                                    @else
+                                                        <span class="text-red-500 font-bold">You owe</span> {{ $expense->creator->user->name }}
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-6 sm:mt-0 flex items-center gap-8 justify-between sm:justify-end">
+                                            <div class="text-right">
+                                                <p class="text-xl font-display font-black text-white">$ {{ number_format($detail->amount, 2) }}</p>
+                                                <p class="text-[8px] uppercase tracking-widest font-bold {{ $detail->status === 'PAID' ? 'text-emerald-500' : 'text-neutral-600' }}">
+                                                    {{ $detail->status }}
+                                                </p>
+                                            </div>
+
+                                            @if($expense->creator_member_id == $member->id && $detail->status === 'PENDING')
+                                                <form action="{{ route('colocation.detail.mark-paid', [$colocation->id, $detail->id]) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button class="px-5 py-2.5 bg-white text-black text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-neutral-200 transition-all">
+                                                        Accept Payment
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </div>
-                                </td>
-                                <td class="px-8 py-6 text-right">
-                                    <div class="flex justify-end gap-2">
-                                        <button onclick='showExpenseDetailsModal({{ $colocation->id }}, {{ auth()->id() }}, @json($expense->details), {{ $expense->details->count() }}, "{{ $expense->title }}", "{{ $expense->amount }}", "{{ $expense->category->name }}")'
-                                            class="p-2 hover:bg-white/5 rounded-lg text-neutral-500 hover:text-white transition-all">
-                                            <span class="material-symbols-outlined text-sm">visibility</span>
-                                        </button>
-                                        @if ($expense->creator->user_id == auth()->id())
-                                            <button @disabled(!$is_active)
-                                                onclick="showEditExpenseModal({{ $expense->id }}, '{{ $expense->title }}', {{ $expense->category_id }}, {{ $expense->amount }})"
-                                                class="p-2 hover:bg-white/5 rounded-lg text-neutral-500 hover:text-white transition-all">
-                                                <span class="material-symbols-outlined text-sm">edit</span>
-                                            </button>
-                                            <button @disabled(!$is_active)
-                                                onclick="showDeleteExpenseModal({{ $expense->id }}, '{{ $expense->title }}', '{{ $expense->amount }}', '{{ $expense->category->name }}')"
-                                                class="p-2 hover:bg-white/5 rounded-lg text-neutral-500 hover:text-red-500 transition-all">
-                                                <span class="material-symbols-outlined text-sm">delete</span>
-                                            </button>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
+                                @endif
+                            @endforeach
                         @empty
-                            <tr>
-                                <td colspan="5" class="px-8 py-16 text-center text-neutral-600 italic font-body">No ledger records found for this cycle.</td>
-                            </tr>
+                            <div class="py-12 border-2 border-dashed border-neutral-900 rounded-3xl text-center">
+                                <p class="text-neutral-600 italic">No pending settlements found.</p>
+                            </div>
                         @endforelse
-                    </tbody>
-                </table>
+                    </div>
+                </section>
             </div>
-        </section>
-
-        <!-- Analytics & Controls -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div class="space-y-6">
-                <h3 class="text-xl font-display font-bold text-white flex items-center gap-3">
-                    <span class="material-symbols-outlined text-neutral-500">analytics</span>
-                    Balance Architecture
-                </h3>
-                <div class="space-y-3 font-body">
-                    @forelse ($colocation->members as $member)
-                        <div class="flex items-center justify-between p-6 rounded-2xl modern-border bg-surface-dark/20">
+        </div>
+        <div class="flex items-center justify-between p-6 rounded-2xl modern-border bg-surface-dark/20">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 rounded-xl bg-neutral-900 border border-border-dark flex items-center justify-center text-neutral-500 italic">
                                     {{ substr($member->user->name, 0, 1) }}

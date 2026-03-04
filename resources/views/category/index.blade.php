@@ -6,17 +6,17 @@
     <main class="mx-auto w-full max-w-7xl flex-1 px-6 py-12 flex flex-col gap-12">
         <!-- Breadcrumbs & Status -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <nav class="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
+            <nav class="flex items-center gap-3 text-xs font-semibold text-neutral-500">
                 <a class="hover:text-white transition-colors" href="{{ route('dashboard') }}">Dashboard</a>
                 <span class="material-symbols-outlined text-xs">chevron_right</span>
-                <a class="hover:text-white transition-colors" href="{{ route('colocation.show', $colocationId) }}">Unit Portal</a>
+                <a class="hover:text-white transition-colors" href="{{ route('colocation.show', $colocationId) }}">Group Details</a>
                 <span class="material-symbols-outlined text-xs">chevron_right</span>
-                <span class="text-white">Taxonomy Schema</span>
+                <span class="text-white">Categories</span>
             </nav>
             @if (!$is_active)
-                <div class="px-4 py-1.5 rounded-full border border-red-500/20 bg-red-500/5 text-[8px] font-bold text-red-500 uppercase tracking-widest flex items-center gap-2">
+                <div class="px-4 py-1.5 rounded-full border border-red-500/20 bg-red-500/5 text-[10px] font-bold text-red-500 uppercase tracking-widest flex items-center gap-2">
                     <span class="w-1 h-1 rounded-full bg-red-500 animate-pulse"></span>
-                    Unit Integration Severed
+                    Group inactive
                 </div>
             @endif
         </div>
@@ -25,17 +25,17 @@
         <section class="flex flex-col md:flex-row md:items-end justify-between gap-12">
             <div class="max-w-3xl space-y-6">
                 <h1 class="text-5xl md:text-7xl font-display font-black text-white tracking-tighter leading-none">
-                    Schema <span class="text-neutral-500">Taxonomy</span>
+                    Group <span class="text-neutral-500">Categories</span>
                 </h1>
                 <p class="text-lg text-neutral-400 font-body leading-relaxed max-w-xl">
-                    Define the classification framework for your unit ledger. Categorize resource transmissions with precision and semantic clarity.
+                    Organize your expenses by defining categories. Keep your group spending clear and easy to track.
                 </p>
             </div>
             <div class="hidden md:block">
                 <button @disabled(!$is_active) onclick="showCreateModal()"
-                    class="btn-modern px-10 py-5 flex items-center gap-3 group">
-                    <span class="material-symbols-outlined text-xl group-hover:rotate-90 transition-transform">add</span>
-                    <span>Define New Schema</span>
+                    class="btn-modern px-10 py-5 flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl">add</span>
+                    <span>Add New Category</span>
                 </button>
             </div>
         </section>
@@ -45,35 +45,31 @@
             @foreach ($categories as $category)
                 <div class="group glass modern-border rounded-3xl p-8 relative overflow-hidden flex flex-col min-h-[280px]">
                     <div class="w-14 h-14 rounded-2xl bg-neutral-900 border border-white/5 flex items-center justify-center text-neutral-500 mb-8 group-hover:text-white transition-colors">
-                        <span class="material-symbols-outlined text-3xl">terminal</span>
+                        <span class="material-symbols-outlined text-3xl">category</span>
                     </div>
                     
                     <div class="flex-1 space-y-3">
                         <h3 class="text-xl font-display font-bold text-white tracking-tight">{{ $category->name }}</h3>
-                        <p class="text-xs text-neutral-500 font-body leading-relaxed line-clamp-3 italic">
-                            "{{ $category->description ?? 'No definition provided.' }}"
+                        <p class="text-xs text-neutral-500 font-body leading-relaxed line-clamp-3">
+                            {{ $category->description ?? 'No description provided.' }}
                         </p>
                     </div>
 
                     <!-- Actions -->
-                    <div class="mt-8 flex items-center justify-between pt-6 border-t border-white/5">
-                        <div class="flex gap-4">
+                    <div class="mt-auto flex items-center justify-between pt-6 border-t border-white/5">
+                        <div class="flex gap-3">
                             <button @disabled(!$is_active)
                                 onclick="showEditModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}')"
-                                class="text-neutral-600 hover:text-white transition-colors">
+                                class="flex items-center gap-2 px-3 py-2 rounded-lg border border-border-dark text-xs font-semibold text-neutral-500 hover:text-white hover:border-white transition-all bg-surface-dark/50">
                                 <span class="material-symbols-outlined text-sm">edit</span>
+                                Edit
                             </button>
                             <button @disabled(!$is_active) onclick="showDeleteModal({{ $category->id }})" 
-                                class="text-neutral-600 hover:text-red-500 transition-colors">
+                                class="flex items-center gap-2 px-3 py-2 rounded-lg border border-red-500/20 text-xs font-semibold text-red-500/50 hover:text-red-500 hover:border-red-500 transition-all bg-red-500/5">
                                 <span class="material-symbols-outlined text-sm">delete</span>
+                                Delete
                             </button>
                         </div>
-                        <span class="text-[8px] font-bold text-neutral-700 uppercase tracking-widest">Type: Static Node</span>
-                    </div>
-
-                    <!-- Subtle background decoration -->
-                    <div class="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                        <span class="material-symbols-outlined text-[100px]">category</span>
                     </div>
                 </div>
             @endforeach
@@ -85,7 +81,7 @@
                     <div class="w-12 h-12 rounded-full border border-neutral-800 flex items-center justify-center text-neutral-600 group-hover:text-white group-hover:border-white/20 transition-all mb-4">
                         <span class="material-symbols-outlined text-2xl">add</span>
                     </div>
-                    <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] group-hover:text-white transition-colors">Initialize Schema</span>
+                    <span class="text-xs font-semibold text-neutral-500 group-hover:text-white transition-colors">Add Category</span>
                 </button>
             @endif
         </div>
@@ -103,8 +99,8 @@
                 @csrf
                 <div class="flex justify-between items-start">
                     <div>
-                        <h2 class="text-2xl font-display font-bold text-white tracking-tight">Define Schema</h2>
-                        <p class="text-neutral-500 font-body text-sm mt-2">Create a new categorization node for the ledger.</p>
+                        <h2 class="text-2xl font-display font-bold text-white tracking-tight">New Category</h2>
+                        <p class="text-neutral-500 font-body text-sm mt-2">Create a label to organize your roommate expenses.</p>
                     </div>
                     <button onclick="closeCreateModal()" type="button" class="text-neutral-500 hover:text-white transition-colors">
                         <span class="material-symbols-outlined">close</span>
@@ -113,20 +109,20 @@
 
                 <div class="space-y-8">
                     <div class="space-y-3">
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Schema Identifier</label>
+                        <label class="text-xs font-semibold text-neutral-500">Category Name</label>
                         <input name="name" value="{{ old('name') }}"
                             class="w-full rounded-xl border border-border-dark bg-background-dark py-4 px-5 text-white placeholder:text-neutral-700 focus:border-white focus:ring-0 transition-colors"
-                            placeholder="Resource Classification" type="text" />
+                            placeholder="Groceries, Rent, Utilities..." type="text" />
                         @error('name', 'addCategory')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-3">
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Semantic Definition</label>
+                        <label class="text-xs font-semibold text-neutral-500">Description</label>
                         <textarea name="description"
                             class="w-full rounded-xl border border-border-dark bg-background-dark py-4 px-5 text-white placeholder:text-neutral-700 focus:border-white focus:ring-0 transition-colors resize-none"
-                            placeholder="Primary objective and scope of this classification..." rows="4">{{ old('description') }}</textarea>
+                            placeholder="What is this category for?" rows="4">{{ old('description') }}</textarea>
                         @error('description', 'addCategory')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -134,8 +130,8 @@
                 </div>
 
                 <div class="flex gap-4">
-                    <button onclick="closeCreateModal()" type="button" class="btn-outline flex-1 py-4">Abort</button>
-                    <button type="submit" class="btn-modern flex-1 py-4">Commit Schema</button>
+                    <button onclick="closeCreateModal()" type="button" class="btn-outline flex-1 py-4">Cancel</button>
+                    <button type="submit" class="btn-modern flex-1 py-4">Save Category</button>
                 </div>
             </form>
         </div>

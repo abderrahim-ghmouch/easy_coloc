@@ -21,16 +21,16 @@
             <!-- Header Section -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 class="text-4xl font-display font-bold text-white tracking-tight">Workspaces</h1>
+                    <h1 class="text-4xl font-display font-bold text-white tracking-tight">Colocations</h1>
                     <div class="flex items-center gap-2 mt-2">
                         <div class="h-1.5 w-1.5 rounded-full bg-white opacity-40"></div>
-                        <p class="text-neutral-500 text-[10px] font-bold uppercase tracking-[0.2em]">
-                            Total Units: {{ $count }}</p>
+                        <p class="text-neutral-500 text-xs font-semibold">
+                            Total Groups: {{ $count }}</p>
                     </div>
                 </div>
                 <div>
                     <button onclick="showCreateModal()" class="btn-modern text-xs">
-                        Create Workspace
+                        Create New Group
                     </button>
                 </div>
             </div>
@@ -38,9 +38,9 @@
             @if ($count > 0)
                 <!-- Active Units -->
                 <section class="space-y-6">
-                    <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 flex items-center gap-2">
+                    <h3 class="text-xs font-semibold text-neutral-500 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">bolt</span>
-                        Active Subscription
+                        Active Group
                     </h3>
                     
                     @if ($active)
@@ -49,7 +49,7 @@
                                 <div class="flex flex-col gap-4">
                                     <div class="flex items-center gap-3">
                                         @if ($active->owner->user_id === auth()->user()->id)
-                                            <span class="text-[10px] font-bold bg-white text-black px-2.5 py-1 rounded uppercase tracking-widest">Administrator</span>
+                                            <span class="text-[10px] font-bold bg-white text-black px-2.5 py-1 rounded uppercase tracking-widest">Admin</span>
                                         @else
                                             <span class="text-[10px] font-bold bg-neutral-800 text-neutral-400 px-2.5 py-1 rounded border border-border-dark uppercase tracking-widest">Member</span>
                                         @endif
@@ -60,30 +60,32 @@
                                         <p class="text-neutral-500 font-body text-sm mt-2 max-w-md">{{ $active->description }}</p>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-4 w-full md:w-auto">
+                                <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
                                     @if ($active->owner->user_id === auth()->user()->id)
-                                        <button onclick="showDisactivateModal({{ $active->id }})" class="btn-outline px-4 py-2 text-xs border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white">
-                                            Close Unit
+                                        <button onclick="showDisactivateModal({{ $active->id }})" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 border border-red-500/20 rounded-xl text-xs font-bold text-red-500 hover:bg-red-500 hover:text-white transition-all order-2 sm:order-1">
+                                            <span class="material-symbols-outlined text-sm">delete</span>
+                                            Delete Group
                                         </button>
                                     @endif
-                                    <a href="{{ route('colocation.show', $active->id) }}" class="btn-modern px-8 py-2.5 text-xs flex-1 md:flex-none">
-                                        Access Portal
+                                    <a href="{{ route('colocation.show', $active->id) }}" class="btn-modern px-10 py-3.5 text-sm flex-1 md:flex-none order-1 sm:order-2 shadow-xl shadow-white/5">
+                                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                        View Dashboard
                                     </a>
                                 </div>
                             </div>
                         </div>
                     @else
                         <div class="rounded-2xl border border-dashed border-border-dark p-12 text-center">
-                            <p class="text-neutral-500 font-body italic">No active workspace assigned.</p>
+                            <p class="text-neutral-500 font-body italic">No active group assigned.</p>
                         </div>
                     @endif
                 </section>
 
                 <!-- History Section -->
                 <section class="space-y-6 mt-12">
-                    <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 flex items-center gap-2">
+                    <h3 class="text-xs font-semibold text-neutral-500 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">history</span>
-                        Archive
+                        Archived Groups
                     </h3>
                     <div class="grid grid-cols-1 gap-4">
                         @forelse ($inactives as $inactive)
@@ -95,9 +97,9 @@
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <p class="font-bold font-display group-hover:text-white transition-colors">{{ $inactive->name }}</p>
-                                            <span class="text-[8px] font-bold px-2 py-0.5 rounded border border-neutral-800 uppercase tracking-widest">Terminated</span>
+                                            <span class="text-[8px] font-bold px-2 py-0.5 rounded border border-neutral-800 uppercase tracking-widest text-neutral-600">Closed</span>
                                         </div>
-                                        <p class="text-[10px] uppercase tracking-wider font-medium opacity-60">Created {{ $inactive->created_at->diffForHumans() }}</p>
+                                        <p class="text-[10px] uppercase font-medium opacity-60">Created {{ $inactive->created_at->diffForHumans() }}</p>
                                     </div>
                                 </div>
                                 <a href="{{ route('colocation.show', $inactive->id) }}" class="h-10 w-10 flex items-center justify-center rounded-full modern-border text-neutral-500 hover:text-white hover:bg-neutral-800 transition-all">
@@ -105,7 +107,7 @@
                                 </a>
                             </div>
                         @empty
-                            <p class="text-neutral-600 font-body text-sm italic">Archive empty.</p>
+                            <p class="text-neutral-600 font-body text-sm italic">No history found.</p>
                         @endforelse
                     </div>
                 </section>
@@ -113,13 +115,13 @@
                 <!-- Empty State -->
                 <div class="flex flex-col items-center justify-center py-24 text-center">
                     <div class="h-24 w-24 rounded-full bg-surface-dark border border-border-dark flex items-center justify-center mb-8">
-                        <span class="material-symbols-outlined text-4xl text-neutral-700">inventory_2</span>
+                        <span class="material-symbols-outlined text-4xl text-neutral-700">groups</span>
                     </div>
-                    <h2 class="text-3xl font-display font-medium text-white mb-4">No workspaces found</h2>
-                    <p class="text-neutral-500 max-w-sm mb-12 font-body">Complete your first unit integration to begin managing your shared finances.</p>
+                    <h2 class="text-3xl font-display font-medium text-white mb-4">No groups found</h2>
+                    <p class="text-neutral-500 max-w-sm mb-12 font-body">Create your first colocation group to start managing shared expenses with your roommates.</p>
                     <div class="flex gap-4">
                         <button onclick="showCreateModal()" class="btn-modern px-8 py-4">
-                            Establish Workspace
+                            Create a Group
                         </button>
                     </div>
                 </div>
@@ -135,8 +137,8 @@
             <div class="p-10">
                 <div class="flex justify-between items-start mb-10">
                     <div>
-                        <h2 class="text-2xl font-display font-bold text-white tracking-tight">New Workspace</h2>
-                        <p class="text-neutral-500 font-body text-sm mt-2">Initialize your colocation environment.</p>
+                        <h2 class="text-2xl font-display font-bold text-white tracking-tight">New Group</h2>
+                        <p class="text-neutral-500 font-body text-sm mt-2">Create a new colocation to track shared costs.</p>
                     </div>
                     <button onclick="closeCreateModal()" class="text-neutral-500 hover:text-white transition-colors">
                         <span class="material-symbols-outlined">close</span>
@@ -146,20 +148,20 @@
                 <form action="{{ route('colocation.store') }}" method="POST" class="space-y-8">
                     @csrf
                     <div class="space-y-3">
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Unit Name</label>
+                        <label class="text-xs font-semibold text-neutral-500">Group Name</label>
                         <input name="name" value="{{ old('name') }}"
                             class="w-full rounded-xl border border-border-dark bg-background-dark py-4 px-5 text-white placeholder:text-neutral-700 focus:border-white focus:ring-0 transition-colors"
-                            placeholder="Ex: District 12 / Modern Apartment" type="text" />
+                            placeholder="Ex: Apartment 4B / Beach House" type="text" />
                         @error('name', 'addColocation')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-3">
-                        <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Internal Directives</label>
+                        <label class="text-xs font-semibold text-neutral-500">Description</label>
                         <textarea name="description"
                             class="w-full rounded-xl border border-border-dark bg-background-dark py-4 px-5 text-white placeholder:text-neutral-700 focus:border-white focus:ring-0 transition-colors resize-none"
-                            placeholder="Workspace goals and house rules..." rows="4">{{ old('description') }}</textarea>
+                            placeholder="Brief description or house rules..." rows="4">{{ old('description') }}</textarea>
                         @error('description', 'addColocation')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -170,7 +172,7 @@
                             Cancel
                         </button>
                         <button type="submit" class="btn-modern flex-1">
-                            Deploy Unit
+                            Create Group
                         </button>
                     </div>
                 </form>
@@ -184,18 +186,18 @@
             <div class="h-16 w-16 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-8">
                 <span class="material-symbols-outlined text-3xl">warning</span>
             </div>
-            <h3 class="text-2xl font-display font-bold text-white mb-4">Terminate Workspace?</h3>
-            <p class="text-neutral-500 font-body text-sm mb-10 leading-relaxed">This action will archive all financial data and remove all assigned members. This operation is permanent.</p>
+            <h3 class="text-2xl font-display font-bold text-white mb-4">Delete Group?</h3>
+            <p class="text-neutral-500 font-body text-sm mb-10 leading-relaxed">This will archive all expenses and remove members. This cannot be undone.</p>
             
             <form method="POST" class="space-y-3">
                 @csrf
                 @method('DELETE')
                 <button class="w-full bg-red-500 text-white rounded-xl py-4 font-bold hover:bg-red-600 transition-colors">
-                    Confirm Termination
+                    Yes, Delete Group
                 </button>
             </form>
-            <button onclick="closeDisactivateModal()" class="w-full btn-outline py-4 mt-3 bg-white/5">
-                Maintain Workspace
+            <button onclick="closeDisactivateModal()" class="w-full btn-outline py-4 mt-3 bg-white/5 font-semibold">
+                No, Keep it
             </button>
         </div>
     </div>

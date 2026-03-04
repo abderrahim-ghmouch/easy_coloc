@@ -10,7 +10,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <!-- Scripts & Styles -->
@@ -33,7 +33,7 @@
                         "neutral-900": "#18181b",
                     },
                     fontFamily: {
-                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "display": ["Outfit", "sans-serif"],
                         "body": ["Inter", "sans-serif"],
                     },
                 },
@@ -51,7 +51,7 @@
         }
 
         h1, h2, h3, h4, .font-display {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Outfit', sans-serif;
         }
 
         .glass {
@@ -65,15 +65,19 @@
         }
 
         .btn-modern {
-            @apply flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-black transition-all hover:bg-neutral-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+            @apply flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black transition-all duration-200 hover:bg-neutral-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-white/5;
         }
 
         .btn-outline {
-            @apply flex items-center justify-center gap-2 rounded-xl border border-border-dark bg-transparent px-6 py-3 text-sm font-bold text-white transition-all hover:bg-white hover:text-black active:scale-95;
+            @apply flex items-center justify-center gap-2 rounded-xl border border-border-dark bg-surface-dark/50 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:border-white hover:text-white active:scale-95;
         }
 
         .hover-card {
-            @apply transition-all duration-300 hover:border-neutral-700 hover:bg-white/[0.02];
+            @apply transition-all duration-300 hover:border-neutral-700 hover:bg-white/[0.04] hover:-translate-y-1;
+        }
+
+        .input-primary {
+            @apply w-full rounded-xl border border-border-dark bg-background-dark py-4 px-5 text-white placeholder:text-neutral-700 focus:border-white focus:ring-0 transition-all duration-200;
         }
 
         ::-webkit-scrollbar {
@@ -92,17 +96,19 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #3f3f46;
         }
+
+        [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans antialiased selection:bg-white selection:text-black">
     @auth
         @include('partials.sidebar')
     @endauth
 
-    <div class="@auth lg:ml-72 @endauth min-h-screen flex flex-col">
+    <div class="@auth lg:ml-72 @endauth min-h-screen flex flex-col transition-all duration-300 ease-in-out">
         <!-- Mobile Top Bar -->
         <header class="sticky top-0 z-30 lg:hidden border-b border-border-dark bg-background-dark/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
-            <a href="{{ route('home') }}" class="flex items-center gap-2">
+            <a href="/" class="flex items-center gap-2">
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-black font-display font-black text-sm">E</div>
                 <span class="font-display font-bold text-white tracking-tight">EasyColoc</span>
             </a>
@@ -113,19 +119,10 @@
             @endauth
         </header>
 
-        <!-- Dynamic Header -->
-        @guest
-            @include('partials.header')
-        @endguest
-
-        <main class="flex-1 w-full @guest max-w-7xl mx-auto @endguest">
+        <main class="flex-1 w-full max-w-7xl mx-auto">
             {{ $slot ?? '' }}
             @yield('content')
         </main>
-
-        @guest
-            @include('partials.footer')
-        @endguest
     </div>
 
     @include('partials.flash-message')

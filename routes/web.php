@@ -11,7 +11,9 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class,'index'])->name('home');
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     /* Profile Routes (Breeze) */

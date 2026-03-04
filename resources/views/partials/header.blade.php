@@ -1,48 +1,55 @@
-<header class="sticky top-0 z-50 w-full border-b border-primary/20 bg-background-dark/80 backdrop-blur-md">
+<header class="sticky top-0 z-50 w-full border-b border-border-dark bg-background-dark/80 backdrop-blur-md">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <div class="flex items-center gap-3">
-            <div
-                class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white shadow-lg shadow-primary/20">
-                <span class="material-symbols-outlined text-3xl">sailing</span>
+        <a href="{{ route('home') }}" class="flex items-center gap-2 group">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-black font-display font-black text-xl">
+                E
             </div>
-            <h2 class="text-2xl font-extrabold tracking-tight text-slate-100">Easy<span class="text-primary">Coloc</span>
+            <h2 class="text-xl font-display font-bold tracking-tight text-white group-hover:opacity-80 transition-opacity">
+                Easy<span class="text-neutral-400">Coloc</span>
             </h2>
-        </div>
+        </a>
+
         @php
             function isActive($name)
             {
-                $activeClass = 'text-primary font-semibold';
-                $inactiveClass = 'text-slate-300 hover:text-primary transition-colors';
+                $activeClass = 'text-white border-b border-white';
+                $inactiveClass = 'text-neutral-400 hover:text-white transition-colors';
                 return request()->routeIs($name) ? $activeClass : $inactiveClass;
             }
         @endphp
-        <nav class="hidden md:flex items-center gap-8">
+
+        <nav class="hidden md:flex items-center gap-8 font-body text-sm">
             <a class="{{ isActive('home') }}" href="{{ route('home') }}">Home</a>
             <a class="{{ isActive('dashboard') }}" href="{{ route('dashboard') }}">Dashboard</a>
-            <a class="{{ isActive('colocation.index') }}" href="{{ route('colocation.index') }}">Colocation</a>
+            <a class="{{ isActive('colocation.index') }}" href="{{ route('colocation.index') }}">Colocations</a>
             @auth
                 @if (auth()->user()->role == 'ADMIN')
                     <a class="{{ isActive('admin.index') }}" href="{{ route('admin.index') }}">Admin</a>
                 @endif
             @endauth
         </nav>
+
         <div class="flex items-center gap-4">
             @guest
                 <a href="{{ route('login.view') }}"
-                    class="hidden sm:block text-sm font-bold text-slate-100 hover:text-primary transition-colors px-4 py-2">Se
-                    connecter</a>
+                    class="hidden sm:block text-sm font-medium text-neutral-400 hover:text-white transition-colors">
+                    Log In
+                </a>
                 <a href="{{ route('register.view') }}"
-                    class="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/30">
-                    inscription
+                    class="btn-modern px-5 py-2 text-xs">
+                    Get Started
                 </a>
             @endguest
             @auth
-                <form action="{{ route('logout') }}" method="post">
-                    @csrf
-                    <button href="{{ route('logout') }}"
-                        class="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/30">Se
-                        Deconnecter</button>
-                </form>
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-medium text-neutral-500 hidden lg:block uppercase tracking-wider">{{ Auth::user()->name }}</span>
+                    <form action="{{ route('logout') }}" method="post">
+                        @csrf
+                        <button type="submit" class="btn-outline px-4 py-2 text-xs">
+                            Sign Out
+                        </button>
+                    </form>
+                </div>
             @endauth
         </div>
     </div>

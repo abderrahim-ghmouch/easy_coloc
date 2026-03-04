@@ -1,97 +1,95 @@
 @extends('layouts.app')
 
-@section('title', 'EasyColoc - Dashboard')
+@section('title', 'Dashboard | EasyColoc')
 
 @section('content')
-    <main class="mx-auto w-full max-w-[960px] flex-1 px-6 py-8 lg:px-0">
-        <!-- Filter Section -->
-        <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <main class="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
+        <!-- Dashboard Header -->
+        <div class="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Tableau de bord</h1>
-                <p class="text-slate-500 dark:text-slate-400">Suivi de vos dépenses personnelles</p>
+                <h1 class="text-4xl font-display font-bold text-white tracking-tight">Overview</h1>
+                <p class="text-neutral-500 font-body mt-2">Personal expenditure analytics for this cycle.</p>
             </div>
-            <div class="relative min-w-[200px]">
+            <div class="relative">
                 <form action="" method="get" onchange="this.submit()">
                     <input type="month" name="month-year" value="{{ request('month-year') }}"
-                        class="custom-select w-full rounded-xl border border-primary/20 bg-white px-4 py-3 pr-10 text-sm font-medium focus:border-accent-gold focus:ring-accent-gold dark:bg-slate-900 dark:text-slate-100"
+                        class="w-full rounded-lg border border-border-dark bg-background-dark px-4 py-2.5 text-sm font-medium focus:border-white focus:ring-0 transition-colors"
                         id="month-select" />
                 </form>
             </div>
         </div>
-        <!-- Total Expenses Card -->
-        <div class="mb-10 @container">
-            <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary to-[#8b1c1c] p-8 shadow-2xl">
-                <div class="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-accent-gold/10 blur-3xl"></div>
-                <div class="absolute -bottom-8 left-1/4 h-32 w-32 rounded-full bg-white/5 blur-2xl"></div>
-                <div class="relative z-10 flex flex-col items-center justify-between gap-6 sm:flex-row">
-                    <div>
-                        <p class="text-sm font-medium uppercase tracking-widest text-white/80">Total des Dépenses
-                        </p>
-                        <h2 class="mt-2 text-5xl font-black text-white">{{ $total_amounts }} €</h2>
-                    </div>
-                    <div class="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-md">
-                        <span class="material-symbols-outlined text-accent-gold">trending_up</span>
-                        <span class="text-sm font-bold text-white">+12% vs mois dernier</span>
-                    </div>
+
+        <!-- Metric Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="p-8 rounded-2xl glass modern-border relative overflow-hidden group">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-4">Total Expenditure</p>
+                <h2 class="text-5xl font-display font-medium text-white tracking-tighter">€{{ number_format($total_amounts, 2) }}</h2>
+                
+                <div class="mt-6 flex items-center gap-2 text-xs font-medium text-emerald-500">
+                    <span class="material-symbols-outlined text-sm">trending_up</span>
+                    <span>12% from last cycle</span>
+                </div>
+                
+                <div class="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity">
+                    <span class="material-symbols-outlined text-9xl">payments</span>
                 </div>
             </div>
+
+            <!-- Add more metrics if needed, for now I'll stick to a clean layout -->
+            <div class="md:col-span-2 p-8 rounded-2xl modern-border bg-surface-dark/50 flex items-center justify-between">
+                <div class="max-w-xs">
+                    <h3 class="text-lg font-bold text-white">System Status: Active</h3>
+                    <p class="text-sm text-neutral-500 mt-1">Your colocation accounts are synchronized and verified.</p>
+                </div>
+                <a href="{{ route('colocations.index') }}" class="btn-modern text-xs">Manage Groups</a>
+            </div>
         </div>
-        <!-- Expenses List -->
-        <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Mes Dépenses</h3>
+
+        <!-- Ledger Section -->
+        <div class="mb-6 flex items-center justify-between">
+            <h3 class="text-xl font-display font-bold text-white">Recent Ledger</h3>
+            <button class="text-xs font-bold text-neutral-500 hover:text-white transition-colors uppercase tracking-widest">Download CSV</button>
         </div>
-        <div
-            class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900/50">
+
+        <div class="overflow-hidden rounded-2xl modern-border bg-surface-dark/30 backdrop-blur-sm">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left">
                     <thead>
-                        <tr class="border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900">
-                            <th
-                                class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                Titre</th>
-                            <th
-                                class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                Catégorie</th>
-                            <th
-                                class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                Date</th>
-                            <th
-                                class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                Montant</th>
+                        <tr class="border-b border-border-dark bg-surface-dark/50">
+                            <th class="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Description</th>
+                            <th class="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Category</th>
+                            <th class="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Date</th>
+                            <th class="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">Amount</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tbody class="divide-y divide-border-dark font-body">
                         @forelse ($expenses as $expense)
-                            <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="flex h-8 w-8 items-center justify-center rounded bg-primary/10 text-primary">
-                                            <span class="material-symbols-outlined text-lg">category</span>
+                            <tr class="group hover:bg-white/[0.02] transition-colors">
+                                <td class="px-8 py-6">
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white group-hover:bg-white group-hover:text-black transition-all">
+                                            <span class="material-symbols-outlined text-xl">receipt</span>
                                         </div>
-                                        <span class="font-medium text-slate-900 dark:text-slate-100">{{ $expense->title }}</span>
+                                        <span class="font-medium text-white">{{ $expense->title }}</span>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span
-                                        class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-300">{{ $expense->category->name }}</span>
+                                <td class="px-8 py-6">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-neutral-900 border border-border-dark text-[10px] font-bold text-neutral-400 uppercase tracking-widest">{{ $expense->category->name }}</span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{{ $expense->created_at->format('d/m/Y') }}</td>
-                                <td class="px-6 py-4 text-right font-bold text-slate-900 dark:text-slate-100">{{ $expense->amount }} €
+                                <td class="px-8 py-6 text-sm text-neutral-500">
+                                    {{ $expense->created_at->format('M d, Y') }}
+                                </td>
+                                <td class="px-8 py-6 text-right font-display font-medium text-white text-lg">
+                                    €{{ number_format($expense->amount, 2) }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-4 text-center">Aucune expense pour ce mois</td>
+                                <td colspan="4" class="px-8 py-16 text-center text-neutral-500 italic font-body">No entries found for this cycle.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-            <div class="border-t border-slate-200 px-6 py-4 dark:border-slate-800">
-                <button
-                    class="w-full text-center text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400">Voir
-                    tout l'historique</button>
             </div>
         </div>
     </main>

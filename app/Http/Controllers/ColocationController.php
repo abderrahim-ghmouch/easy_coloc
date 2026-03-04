@@ -40,6 +40,12 @@ class ColocationController extends Controller
     }
 
     public function show(Colocation $colocation){
+        $currentMember = $colocation->members->firstWhere('user_id', Auth::id());
+
+        if (!$currentMember) {
+            return redirect()->route('colocation.index')->with('error', 'You are not a member of this colocation.');
+        }
+
         $period = request('month-year');
 
         if ($period) {
@@ -49,7 +55,7 @@ class ColocationController extends Controller
             $month = now()->month;
         }
 
-        $colocation->load(['members.createdExpenses.category','members.createdExpenses.creator.user', 'members.createdExpenses.details.debtor.user', 'members.createdExpenses.details.expense.creator.user', "owner", "categories"]);
+        $colocation->load(['activeMembers.user', 'members.createdExpenses.category', 'members.createdExpenses.creator.user', 'members.createdExpenses.details.debtor.user', 'members.createdExpenses.details.expense.creator.user', "owner", "categories"]);
 
         $expenses = $colocation->members
             ->flatMap(fn ($member) => $member->createdExpenses)
@@ -61,9 +67,6 @@ class ColocationController extends Controller
             ->values();
 
         $total_amount = $expenses->sum('amount');
-
-        $currentMember = $colocation->members
-            ->firstWhere('user_id', Auth::id());
 
         $currentMemberDetails = $expenses
             ->where('creator_member_id', $currentMember->id);
@@ -111,9 +114,9 @@ class ColocationController extends Controller
             })
             ->values();
 
-        $is_active = $colocation->status == "ACTIVE" && is_null($colocation->members()->firstWhere('user_id', Auth::id())->left_at);
+        $is_active = $colocation->status == "ACTIVE" && is_null($currentMember->left_at);
 
-        return view("colocation.show", compact("colocation", "is_active", "expenses", "total_amount", "sold"));
+        return view("colocation.show", compact("colocation", "is_active", "expenses", "total_amount", "sold", "currentMember"));
     }
 
     public function store(Request $request){

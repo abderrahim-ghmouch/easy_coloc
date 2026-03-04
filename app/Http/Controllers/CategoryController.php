@@ -12,10 +12,15 @@ use Illuminate\Support\Facades\Validator;
 class CategoryController extends Controller
 {
     public function index(int $colocationId) {
-        $categories = Category::where("colocation_id", $colocationId)->get();
+        $colocation = Colocation::findOrFail($colocationId);
+        $currentMember = $colocation->members->firstWhere('user_id', Auth::id());
 
-        $colocation = Colocation::find($colocationId);
-        $is_active = $colocation->status == "ACTIVE" && is_null($colocation->members()->firstWhere('user_id', Auth::id())->left_at);
+        if (!$currentMember) {
+            return redirect()->route('colocation.index')->with('error', 'You are not a member of this colocation.');
+        }
+
+        $categories = Category::where("colocation_id", $colocationId)->get();
+        $is_active = $colocation->status == "ACTIVE" && is_null($currentMember->left_at);
 
         return view("category.index", compact("categories", "is_active", "colocationId"));
     }

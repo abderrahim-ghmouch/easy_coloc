@@ -49,7 +49,7 @@ class InvitationController extends Controller
             'token'=> $token,
             'expires_at' => now()->addMinutes(10),
             'colocation_id' => $colocationId,
-        ]);
+        ]); 
 
         Mail::to($request->email)->send(
             new InvitationMail($token)

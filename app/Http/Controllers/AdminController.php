@@ -43,7 +43,7 @@ class AdminController extends Controller
             'status' => 'ACTIVE',
         ]);
 
-        return back()->with('success','User has been activated successfully');
+        return back()->with('success','User has been activated');
     }
 
     public function deactivate(User $user){

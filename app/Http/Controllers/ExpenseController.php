@@ -17,32 +17,25 @@ class ExpenseController extends Controller
             'category_id' => 'required',
         ])->validateWithBag('addExpense');
 
+        $currentMember = ColocationMember::where('user_id', Auth::id())
+            ->where('colocation_id', $request->colocation_id)
+            ->firstOrFail();
+
         $expense = Expense::create([
             'title'=> $request->title,
             'amount' => $request->amount,
             'category_id' => $request->category_id,
-            'creator_member_id' => ColocationMember::whereHas('user', function ($query) {
-                $query->where('user_id', Auth::id());
-            })->whereHas('colocation', function ($query) {
-                $query->where('status', 'ACTIVE');
-            })->first()->id,
+            'creator_member_id' => $currentMember->id,
         ]);
 
-        $members = ColocationMember::with('colocation.members')
-            ->where('user_id', Auth::id())
-            ->whereHas("colocation", function ($query) {
-                $query->where('status', 'ACTIVE');
-            })
-            ->first()
-            ->colocation
-            ->members
+        $members = $currentMember->colocation->members
             ->filter(fn ($member) => is_null($member->left_at));
 
         foreach($members as $member){
             if($member->id != $expense->creator_member_id){
                 $expense->details()->create([
                     'debtor_member_id' => $member->id,
-                    'amount' => round($expense->amount / $members->count(),2)
+                    'amount' => round($expense->amount / $members->count(), 2)
                 ]);
             }
         }

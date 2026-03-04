@@ -1,48 +1,92 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use app\Http\Controllers\Colocation;
-use App\Http\Controllers\ColocationController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ColocationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InvitationController;
+use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::get('/', [HomeController::class,'index'])->name('home');
 
-Route::post('colocation/{colocation}/expenses', [ExpenseController::class, 'store'])
-    ->middleware(['auth', 'verified'])
-    ->name('expenses.store');
-
-Route::get('dashboard', [ColocationController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
-Route::get('colocation/{colocation}', [ColocationController::class, 'show'])
-    ->middleware(['auth', 'verified'])
-    ->name('colocation.show');
-
-Route::delete('colocation/{colocation}', [ColocationController::class, 'destroy'])
-    ->middleware(['auth', 'verified'])
-    ->name('colocation.destroy');
-
-Route::post('colocation/{colocation}/invite', [ColocationController::class, 'invite'])
-    ->middleware(['auth', 'verified'])
-    ->name('colocation.invite');
-
-Route::post('dashboard', [ColocationController::class, 'store'])->name('colocation.store');
-
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
-Route::post('logout', function (\App\Livewire\Actions\Logout $logout) {
-    $logout();
-
-    return redirect('/');
-})->name('logout');
-
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::post('/users/{user}/ban', [AdminController::class, 'ban'])->name('users.ban');
-    Route::post('/users/{user}/unban', [AdminController::class, 'unban'])->name('users.unban');
+Route::controller(AuthController::class)->middleware(['guest'])->group(function () {
+    Route::get('/login', 'loginView')->name('login.view');
+    Route::post('/login', 'login')->name('login');
+    Route::get('/register', 'registerView')->name('register.view');
+    Route::post('/register', 'register')->name('register');
+    Route::post('/logout', 'logout')->name('logout')->middleware(['auth', 'isBannedOrDeactive'])->withoutMiddleware('guest');
 });
 
-require __DIR__.'/auth.php';
+Route::middleware(['auth', 'isBannedOrDeactive'])->group(function () {
+
+    /* Admin Routes */
+
+    Route::prefix('admin')->middleware('role:ADMIN')->controller(AdminController::class)->as('admin.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::put('/{user}/ban', 'ban')->name('ban');
+        Route::put('/{user}/unban', 'unban')->name('unban');
+        Route::put('/{user}/activate', 'activate')->name('activate');
+        Route::put('/{user}/deactivate', 'deactivate')->name('deactivate');
+    });
+
+    /* Dashboard */
+
+    Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
+
+    /* Colocation */
+
+    Route::prefix('colocation')->middleware('ensureColocationIsActive')->controller(ColocationController::class)->as('colocation.')->group(function () {
+        Route::withoutMiddleware('ensureColocationIsActive')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{colocation}', 'show')->name('show');
+        });
+        Route::delete('/leave/{colocation}', 'leave')->name('leave')->middleware('colocation:Member');
+        Route::delete('/{colocation}', 'destroy')->name('destroy')->middleware('colocation:Owner');
+
+        /* Colocation Category */
+
+        Route::prefix('category')->middleware('colocation:Owner')->controller(CategoryController::class)->as('category.')->group(function () {
+            Route::get('/{colocationId}', 'index')->name('index')->withoutMiddleware('ensureColocationIsActive');
+            Route::post('/{colocationId}', 'store')->name('store');
+            Route::put("/{category}", 'update')->name('update');
+            Route::delete('/{category}', 'destroy')->name('destroy');
+        });
+
+        /* Members */
+
+        Route::get('/{colocation}/members', 'members')->name('members')->withoutMiddleware('ensureColocationIsActive');
+        Route::post('/{colocation}/{colocationMember}/remove', 'removeMember')->name('removeMember')->middleware('colocation:Owner');
+
+        /* Expense Detail */
+
+        Route::put('/{colocation}/{expenseDetail}', 'markPaid')->name('detail.mark-paid');
+    });
+
+    /* Invitation Routes */
+
+    Route::prefix('invitation')->controller(InvitationController::class)->as('invite.')->group(function () {
+        Route::get('/validate/{tokenValue}', 'validateToken')->name('validate')->withoutMiddleware(['auth', 'isBannedOrDeactive']);
+        Route::get('/invalid', 'invalid')->name('invalid')->withoutMiddleware('auth');
+        Route::get('/reject', 'reject')->name('reject');
+        Route::get('/conflict', 'conflict')->name('conflict');
+        Route::post('/refuse', 'refuse')->name('refuse');
+        Route::middleware('ensureColocationIsActive')->group(function () {
+            Route::get('/accept/{colocationId}', 'accept')->name('accept');
+            Route::get('/success/{colocationId}', 'success')->name('success');
+            Route::post('/invite/{colocationId}', 'invite')->name('invite')->middleware('colocation:Owner');
+            Route::post('/confirm/{colocationId}', 'confirm')->name('confirm');
+        });
+    });
+
+    /* Expense Routes */
+
+    Route::prefix('expense')->controller(ExpenseController::class)->as( 'expense.')->group(function () {
+        Route::post('/', 'store')->name('store');
+        Route::put('/{expense}', 'update')->name('update');
+        Route::delete('/{expense}', 'destroy')->name('destroy');
+    });
+});

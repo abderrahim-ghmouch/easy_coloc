@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Middleware\ColocationRole;
+use App\Http\Middleware\EnsureColocationIsActive;
+use App\Http\Middleware\IsBannedOrDeactive;
+use App\Http\Middleware\Role;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'colocation' => ColocationRole::class,
+            "role" => Role::class,
+            "isBannedOrDeactive" => IsBannedOrDeactive::class,
+            'ensureColocationIsActive' => EnsureColocationIsActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -3,74 +3,244 @@
 namespace App\Http\Controllers;
 
 use App\Models\Colocation;
+use App\Models\ColocationMember;
+use App\Models\ExpenseDetail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ColocationController extends Controller
 {
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-        ]);
-
-        $colocation = Colocation::create([
-            'name' => $validated['title'],
-            'status' => 'active',
-            'owner_id' => Auth::user()->id,
-        ]);
-
-        $colocation->members()->attach(Auth::user()->id, ['role' => 'owner']);
-
-        return redirect()->route('dashboard');
-    }
-
-    public function show(Colocation $colocation)
-    {
-        $colocation->load(['members', 'expenses.user']);
-        return view('colocation.show', compact('colocation'));
-    }
-
-    public function destroy(Colocation $colocation)
-    {
-        if (Auth::user()->id !== $colocation->owner_id) {
-            abort(403);
-        }
-
-        $colocation->delete();
-
-        return redirect()->route('dashboard');
-    }
-
     public function index()
     {
-        $colocations = Auth::user()->Colocations;
+        $active = Colocation::active()->with(['members', "owner"])->whereHas('members', function ($query) {
+            $query->where('user_id', Auth::id())
+                ->whereNull('left_at');
+        })->first();
 
-        return view('dashboard', compact('colocations'));
+        $inactives = Colocation::with('members')
+            ->where(function ($query) {
+                $query->where('status', 'DESACTIVE')
+                    ->orWhereHas('members', function ($q) {
+                        $q->where('user_id', Auth::id())
+                        ->whereNotNull('left_at');
+                    });
+            })
+            ->whereHas('members', function ($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->get();
+
+        $count = Colocation::with('members')->whereHas('members', function ($query) {
+            $query->where('user_id', Auth::id());
+        })->count();
+
+        return view('colocation.index', compact('active', 'inactives','count'));
     }
 
-    public function invite(Request $request, Colocation $colocation)
-    {
-        // Guard: only owner can invite
-        if (Auth::id() !== $colocation->owner_id) {
-            abort(403);
+    public function show(Colocation $colocation){
+        $period = request('month-year');
+
+        if ($period) {
+            [$year, $month] = explode('-', $period);
+        } else {
+            $year = now()->year;
+            $month = now()->month;
         }
 
-        $validated = $request->validate([
-            'email' => 'required|email|exists:users,email'
-        ], [
-            'email.exists' => 'No user found with this email address.'
+        $colocation->load(['members.createdExpenses.category','members.createdExpenses.creator.user', 'members.createdExpenses.details.debtor.user', 'members.createdExpenses.details.expense.creator.user', "owner", "categories"]);
+
+        $expenses = $colocation->members
+            ->flatMap(fn ($member) => $member->createdExpenses)
+            ->filter(fn ($expense) =>
+                $expense->created_at->year == $year &&
+                $expense->created_at->month == $month
+            )
+            ->sortByDesc('created_at')
+            ->values();
+
+        $total_amount = $expenses->sum('amount');
+
+        $currentMember = $colocation->members
+            ->firstWhere('user_id', Auth::id());
+
+        $currentMemberDetails = $expenses
+            ->where('creator_member_id', $currentMember->id);
+
+        $currentMemberAmount = !$currentMemberDetails->count() ? 0 :  $currentMemberDetails
+            ->flatMap(fn ($expense) => $expense->details)
+            ->filter(fn ($detail) => $detail->status == "PENDING" && $detail->created_at > $currentMember->created_at)
+            ->sum('amount');
+
+        $otherMembersDetails = $expenses
+            ->where('creator_member_id', '!=', $currentMember->id);
+
+        $otherMembersAmount = !$otherMembersDetails->count() ? 0 : $otherMembersDetails
+            ->flatMap(fn ($expense) => $expense->details)
+            ->filter(fn ($detail) => $detail->status == "PENDING" && $detail->created_at > $currentMember->created_at)
+            ->sum('amount');
+
+        $sold = $currentMemberAmount - $otherMembersAmount;
+
+        $colocation->members = $colocation->members
+            ->filter(fn ($member) => $member->user_id != Auth::id() && is_null($member->left_at))
+            ->map(function ($member) use ($currentMember, $year, $month) {
+
+                $owed_to_user = ExpenseDetail::where('status', 'PENDING')
+                    ->where('debtor_member_id', $member->id)
+                    ->whereHas('expense', function ($query) use ($currentMember, $year, $month) {
+                        $query->where('creator_member_id', $currentMember->id)
+                            ->whereYear('created_at', $year)
+                            ->whereMonth('created_at', $month);
+                    })
+                    ->sum('amount');
+
+                $user_owes = ExpenseDetail::where('status', 'PENDING')
+                    ->where('debtor_member_id', $currentMember->id)
+                    ->whereHas('expense.creator', function ($query) use ($member, $year, $month) {
+                        $query->where('id', $member->id)
+                            ->whereYear('created_at', $year)
+                            ->whereMonth('created_at', $month);
+                    })
+                    ->sum('amount');
+
+                $member->owed = $owed_to_user - $user_owes;
+
+                return $member;
+            })
+            ->values();
+
+        $is_active = $colocation->status == "ACTIVE" && is_null($colocation->members()->firstWhere('user_id', Auth::id())->left_at);
+
+        return view("colocation.show", compact("colocation", "is_active", "expenses", "total_amount", "sold"));
+    }
+
+    public function store(Request $request){
+        Validator::make($request->all(), [
+            'name' => 'required',
+        ])->validateWithBag('addColocation');
+
+        $activeCount = Colocation::with('members')
+            ->where(function ($query) {
+                $query->where('status', 'ACTIVE')
+                    ->whereHas('members', function ($q) {
+                        $q->where('user_id', Auth::id())
+                        ->whereNull('left_at');
+                    });
+            })
+            ->whereHas('members', function ($query) {
+                $query->where('user_id', Auth::id());
+            })->count();
+
+        if($activeCount > 0){
+            return back()->with('addColocationError','You already have an active colocation');
+        }
+
+        $colocation = Colocation::create([
+            "name"=> $request->name,
+            "description" => $request->description
         ]);
 
-        $user = \App\Models\User::where('email', $validated['email'])->first();
+        $colocation->members()->create([
+            "user_id" => Auth::id(),
+            "role" => "Owner"
+        ]);
 
-        // Check if user is already a member
-        if ($colocation->members->contains($user->id)) {
-            return back()->withErrors(['email' => 'This user is already a member of your flatshare.']);
+        return redirect()->route("colocation.index")->with("success","Colocation created successfully");
+    }
+
+    public function destroy(Colocation $colocation){
+        $members = $colocation->members()->get();
+        foreach($members as $member){
+            $withoutDebts = ($member->debts()->where('status', "PAID")->sum("amount") - $member->debts()->where('status', "PENDING")->sum("amount")) === 0;
+            if($withoutDebts){
+                User::where("id", $member->user_id)->increment("reputation", 1);
+            }else{
+                User::where("id", $member->user_id)->decrement("reputation", 1);
+            }
         }
 
-        $colocation->members()->attach($user->id, ['role' => 'member']);
+        $colocation->update([
+            "status" => "DESACTIVE",
+        ]);
 
-        return back()->with('success', 'User ' . $user->name . ' has been added successfully!');
+        return redirect()->route("colocation.index")->with("success","Colocation deleted successfully");
+    }
+
+    public function leave(Colocation $colocation){
+        $member = $colocation->members()->where('user_id', Auth::id())->first();
+        $withoutDebts = ($member->debts()->where('status', "PAID")->sum("amount") - $member->debts()->where('status', "PENDING")->sum("amount")) === 0;
+        if($withoutDebts){
+            Auth::user()->increment("reputation", 1);
+        }else{
+            Auth::user()->decrement("reputation", 1);
+        }
+
+        $member->update([
+            "left_at" => now()
+        ]);
+
+        return redirect()->route("colocation.index")->with("success","You left the colocation successfully");
+    }
+
+    public function members(Colocation $colocation){
+        $colocation->load(['members.createdExpenses', "members.user",'members.createdExpenses.creator.user', "owner"]);
+        $expenses = $colocation->members
+            ->flatMap(fn ($member) => $member->createdExpenses)
+            ->sortByDesc('created_at')
+            ->values();
+
+        $members = $colocation->members
+            ->filter(fn ($member) => is_null($member->left_at))
+            ->map(function ($member) use ($expenses) {
+
+                $currentMemberDetails = $expenses
+                    ->where('creator_member_id', $member->id);
+
+                $currentMemberAmount = !$currentMemberDetails->count() ? 0 :  $currentMemberDetails
+                    ->flatMap(fn ($expense) => $expense->details)
+                    ->filter(fn ($detail) => $detail->status == "PENDING" && $detail->created_at > $member->created_at)
+                    ->sum('amount');
+
+                $otherMembersDetails = $expenses
+                    ->where('creator_member_id', '!=', $member->id);
+
+                $otherMembersAmount = !$otherMembersDetails->count() ? 0 : $otherMembersDetails
+                    ->flatMap(fn ($expense) => $expense->details)
+                    ->filter(fn ($detail) => $detail->status == "PENDING" && $detail->created_at > $member->created_at)
+                    ->sum('amount');
+
+                $member->sold = $currentMemberAmount - $otherMembersAmount;
+
+                return $member;
+            })
+            ->values();
+
+        $is_active = $colocation->status == "ACTIVE" && is_null($colocation->members()->firstWhere('user_id', Auth::id())->left_at);
+
+        return view("colocation.members", compact("members", "is_active", "colocation"));
+    }
+
+    public function removeMember(Colocation $colocation, ColocationMember $colocationMember){
+        $owner_id = $colocation->members()->where("role", "Owner")->first()->id;
+        $colocationMember->debts()->update([
+            'debtor_member_id' => $owner_id
+        ]);
+
+        $colocationMember->update([
+            "left_at" => now()
+        ]);
+
+        return redirect()->route("colocation.show", $colocation)->with("success","Member removed successfully");
+    }
+
+    public function markPaid(Colocation $colocation, ExpenseDetail $expenseDetail){
+
+        $expenseDetail->update([
+            "status" => "PAID"
+        ]);
+
+        return redirect()->route("colocation.show", $colocation)->with("success","Expense marked as paid successfully");
     }
 }

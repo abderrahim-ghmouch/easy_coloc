@@ -2,36 +2,90 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Colocation;
+use App\Models\ColocationMember;
 use App\Models\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ExpenseController extends Controller
 {
-    /**
-     * Store a newly created expense in storage.
-     */
-    public function store(Request $request, Colocation $colocation)
-    {
-        // Guard: Check if the user is a member of this colocation
-        if (!$colocation->members->contains('id', Auth::id())) {
-            abort(403, 'You are not a member of this flatshare.');
-        }
+    public function store(Request $request){
+        Validator::make($request->all(), [
+            'title' => 'required',
+            'amount' => 'required|numeric',
+            'category_id' => 'required',
+        ])->validateWithBag('addExpense');
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'montant' => 'required|numeric|min:0.01',
-            'date' => 'required|date',
-            'category' => 'nullable|string|max:100',
+        $expense = Expense::create([
+            'title'=> $request->title,
+            'amount' => $request->amount,
+            'category_id' => $request->category_id,
+            'creator_member_id' => ColocationMember::whereHas('user', function ($query) {
+                $query->where('user_id', Auth::id());
+            })->whereHas('colocation', function ($query) {
+                $query->where('status', 'ACTIVE');
+            })->first()->id,
         ]);
 
-        $expense = new Expense($validated);
-        $expense->user_id = Auth::id();
-        $expense->colocation_id = $colocation->id;
-        $expense->save();
+        $members = ColocationMember::with('colocation.members')
+            ->where('user_id', Auth::id())
+            ->whereHas("colocation", function ($query) {
+                $query->where('status', 'ACTIVE');
+            })
+            ->first()
+            ->colocation
+            ->members
+            ->filter(fn ($member) => is_null($member->left_at));
 
-        return redirect()->route('colocation.show', $colocation)
-            ->with('success', 'Expense added successfully!');
+        foreach($members as $member){
+            if($member->id != $expense->creator_member_id){
+                $expense->details()->create([
+                    'debtor_member_id' => $member->id,
+                    'amount' => round($expense->amount / $members->count(),2)
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success','Expense created successfully');
+    }
+
+    public function update(Request $request, Expense $expense){
+        Validator::make($request->all(), [
+            'title' => 'required',
+            'amount' => 'required|numeric',
+            'category_id' => 'required',
+        ])->validateWithBag('editExpense');
+
+        $expense->update([
+            'title'=> $request->title,
+            'amount' => $request->amount,
+            'category_id' => $request->category_id,
+        ]);
+
+        $expense->details()->delete();
+
+        $members = ColocationMember::with('colocation.members')
+            ->where('user_id', Auth::id())
+            ->whereHas("colocation", function ($query) {
+                $query->where('status', 'ACTIVE');
+            })
+            ->first()->colocation->members;
+
+        foreach($members as $member){
+            if($member->id != $expense->creator_member_id){
+                $expense->details()->create([
+                    'debtor_member_id' => $member->id,
+                    'amount' => round($expense->amount / $members->count(),2)
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success','Expense updated successfully');
+    }
+
+    public function destroy(Request $request, Expense $expense){
+        $expense->delete();
+        return redirect()->back()->with('success','Expense deleted successfully');
     }
 }

@@ -3,34 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Colocation;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function dashboard()
+    public function index()
     {
-        $users = User::all();
-        $colocations = Colocation::all();
+        $total_active = User::where("status", "ACTIVE")
+            ->orWhere("is_banned", false)->count();
 
-        return view('admin.dashboard', compact('users', 'colocations'));
+        $total_inactive = User::where("status", "DESACTIVE")
+            ->orWhere("is_banned", true)->count();
+
+        $total_users = $total_active + $total_inactive;
+
+        $users = User::orderByDesc("created_at")->get();
+
+        return view('admin.index', compact('users', 'total_users', 'total_active', 'total_inactive'));
     }
 
-    public function ban(User $user)
-    {
-        if ($user->is_admin) {
-            return back()->with('error', 'Cannot ban an admin.');
-        }
+    public function ban(User $user){
+        $user->update([
+            'is_banned' => true,
+        ]);
 
-        $user->update(['is_banned' => true]);
-
-        return back()->with('success', 'User banned .');
+        return back()->with('success','User has been banned successfully');
     }
 
-    public function unban(User $user)
-    {
-        $user->update(['is_banned' => false]);
+    public function unban(User $user){
+        $user->update([
+            'is_banned' => false,
+        ]);
 
-        return back()->with('success', 'User unbanned successfully.');
+        return back()->with('success','User has been unbanned successfully');
+    }
+
+    public function activate(User $user){
+        $user->update([
+            'status' => 'ACTIVE',
+        ]);
+
+        return back()->with('success','User has been activated successfully');
+    }
+
+    public function deactivate(User $user){
+        $user->update([
+            'status' => 'DESACTIVE',
+        ]);
+
+        return back()->with('success','User has been deactivated successfully');
     }
 }

@@ -1,37 +1,52 @@
 <!DOCTYPE html>
-<html class="dark" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<html class="dark" lang="fr">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'EasyColoc') }}</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Limelight&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>@yield('title', config('app.name', 'EasyColoc'))</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
+    <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#018749", // Celtic Green
-                        "accent": "#fee101",   // Celtic Gold
-                        "background-dark": "#001a11", // Deep Forest
-                        "sidebar-dark": "#013220",    // Darkest Forest
+                        "primary": "#c72929",
+                        "gold": "#D4AF37",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#201212",
+                        "navy": "#0a192f",
+                        "sand": "#f4ede4",
+                        "crimson": "#C62828",
+                        "navy-dark": "#0a111a",
+                        "navy-deep": "#0a1128",
+                        "accent-gold": "#fbbf24",
+                        "neutral-800": "#2d1b14",
+                        "neutral-900": "#1a0f0a",
+                        "parchment": "#fdf8e1",
+                        "nautical-gold": "#b8860b",
+                        "card-dark": "#1c2536",
+                        "border-dark": "#2d3a4f",
+                        "admin-primary": "#FFD700",
+                        "navy": "#001f3f",
+                        "danger": "#c72929",
+                        "marine-navy": "#1a2a44",
+                        "surface-dark": "#2d1a1a",
+                        "border-dark": "#432828",
+                        "accent": "#d4af37",
                     },
                     fontFamily: {
-                        "display": ["Limelight", "cursive"],
-                        "sans": ["Inter", "sans-serif"]
+                        "display": ["Spline Sans", "sans-serif"]
                     },
                     borderRadius: {
                         "DEFAULT": "0.25rem",
@@ -44,20 +59,52 @@
         }
     </script>
     <style>
-        h1, h2, h3 { font-family: 'Limelight', cursive; text-transform: uppercase; letter-spacing: 0.05em; }
-        body { font-family: 'Inter', sans-serif; }
+        .parchment-texture {
+            background-color: #2a1a1a;
+            background-image: radial-gradient(#3a2a2a 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(32, 18, 18, 0.6) 0%, rgba(32, 18, 18, 1) 100%);
+        }
+        .nautical-gradient {
+            background: linear-gradient(135deg, #121a20 0%, #1c2e3a 100%);
+        }
+        .modal-overlay {
+            background-color: rgba(15, 10, 10, 0.85);
+            backdrop-filter: blur(8px);
+        }
+        .invitation-parchment-texture {
+            background-color: #fdf8e1;
+            background-image: linear-gradient(135deg, rgba(184, 134, 11, 0.05) 25%, transparent 25%),
+                linear-gradient(225deg, rgba(184, 134, 11, 0.05) 25%, transparent 25%),
+                linear-gradient(45deg, rgba(184, 134, 11, 0.05) 25%, transparent 25%),
+                linear-gradient(315deg, rgba(184, 134, 11, 0.05) 25%, transparent 25%);
+            background-position: 10px 0, 10px 0, 0 0, 0 0;
+            background-size: 20px 20px;
+            background-repeat: repeat;
+        }
+
+        .glow-button {
+            box-shadow: 0 0 15px rgba(184, 134, 11, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .glow-button:hover {
+            box-shadow: 0 0 25px rgba(184, 134, 11, 0.6);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen antialiased">
-    <div class="flex h-screen overflow-hidden">
-        <x-sidebar />
-        <div class="flex-1 flex flex-col h-screen overflow-y-auto">
-            <main class="flex-1 p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full">
-                {{ $slot }}
-            </main>
-        </div>
-    </div>
+<body
+    class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 selection:bg-primary selection:text-white">
+    @include('partials.header')
+    @yield('content')
+    @yield('modals')
+    @include('partials.flash-message')
+    @include('partials.footer')
 </body>
 
 </html>

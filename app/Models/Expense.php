@@ -2,30 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Expense extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'title',
-        'montant',
-        'user_id',
-        'colocation_id',
-        'description',
-        'date',
-        'category'
+        'amount',
+        'category_id',
+        'creator_member_id',
     ];
 
-    public function user()
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Category::class);
     }
 
-    public function colocation()
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(Colocation::class);
+        return $this->belongsTo(ColocationMember::class, 'creator_member_id');
+    }
+
+    public function details(): HasMany
+    {
+        return $this->hasMany(ExpenseDetail::class);
     }
 }

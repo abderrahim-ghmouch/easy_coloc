@@ -6,7 +6,7 @@
     @php
         $is_owner = auth()->user()->id == $colocation->owner->user_id;
     @endphp
-    <main class="mx-auto w-full max-w-5xl flex-1 px-6 py-12 flex flex-col gap-12">
+    <main class="mx-auto w-full max-w-7xl flex-1 px-6 py-12 flex flex-col gap-12">
         @if (!$is_active)
             <div class="p-4 rounded-xl modern-border bg-surface-dark/50 border-red-500/20">
                 <p class="text-[10px] font-bold text-red-500 uppercase tracking-[0.2em]">

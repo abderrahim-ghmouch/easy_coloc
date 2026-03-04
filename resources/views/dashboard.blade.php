@@ -3,7 +3,7 @@
 @section('title', 'Dashboard | EasyColoc')
 
 @section('content')
-    <main class="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
+    <main class="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
         <!-- Dashboard Header -->
         <div class="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -35,13 +35,12 @@
                 </div>
             </div>
 
-            <!-- Add more metrics if needed, for now I'll stick to a clean layout -->
             <div class="md:col-span-2 p-8 rounded-2xl modern-border bg-surface-dark/50 flex items-center justify-between">
                 <div class="max-w-xs">
                     <h3 class="text-lg font-bold text-white">System Status: Active</h3>
                     <p class="text-sm text-neutral-500 mt-1">Your colocation accounts are synchronized and verified.</p>
                 </div>
-                <a href="{{ route('colocations.index') }}" class="btn-modern text-xs">Manage Groups</a>
+                <a href="{{ route('colocation.index') }}" class="btn-modern text-xs">Manage Units</a>
             </div>
         </div>
 

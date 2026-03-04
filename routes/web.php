@@ -8,22 +8,18 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class,'index'])->name('home');
 
-Route::controller(AuthController::class)->middleware(['guest'])->group(function () {
-    Route::get('/login', 'loginView')->name('login.view');
-    Route::post('/login', 'login')->name('login');
-    Route::get('/register', 'registerView')->name('register.view');
-    Route::post('/register', 'register')->name('register');
-    Route::post('/logout', 'logout')->name('logout')->middleware(['auth', 'isBannedOrDeactive'])->withoutMiddleware('guest');
-});
-
-Route::middleware(['auth', 'isBannedOrDeactive'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
+    /* Profile Routes (Breeze) */
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     /* Admin Routes */
-
     Route::prefix('admin')->middleware('role:ADMIN')->controller(AdminController::class)->as('admin.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::put('/{user}/ban', 'ban')->name('ban');
@@ -33,11 +29,9 @@ Route::middleware(['auth', 'isBannedOrDeactive'])->group(function () {
     });
 
     /* Dashboard */
-
     Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard');
 
     /* Colocation */
-
     Route::prefix('colocation')->middleware('ensureColocationIsActive')->controller(ColocationController::class)->as('colocation.')->group(function () {
         Route::withoutMiddleware('ensureColocationIsActive')->group(function () {
             Route::get('/', 'index')->name('index');
@@ -48,7 +42,6 @@ Route::middleware(['auth', 'isBannedOrDeactive'])->group(function () {
         Route::delete('/{colocation}', 'destroy')->name('destroy')->middleware('colocation:Owner');
 
         /* Colocation Category */
-
         Route::prefix('category')->middleware('colocation:Owner')->controller(CategoryController::class)->as('category.')->group(function () {
             Route::get('/{colocationId}', 'index')->name('index')->withoutMiddleware('ensureColocationIsActive');
             Route::post('/{colocationId}', 'store')->name('store');
@@ -57,20 +50,17 @@ Route::middleware(['auth', 'isBannedOrDeactive'])->group(function () {
         });
 
         /* Members */
-
         Route::get('/{colocation}/members', 'members')->name('members')->withoutMiddleware('ensureColocationIsActive');
         Route::post('/{colocation}/{colocationMember}/remove', 'removeMember')->name('removeMember')->middleware('colocation:Owner');
 
         /* Expense Detail */
-
         Route::put('/{colocation}/{expenseDetail}', 'markPaid')->name('detail.mark-paid');
     });
 
     /* Invitation Routes */
-
     Route::prefix('invitation')->controller(InvitationController::class)->as('invite.')->group(function () {
-        Route::get('/validate/{tokenValue}', 'validateToken')->name('validate')->withoutMiddleware(['auth', 'isBannedOrDeactive']);
-        Route::get('/invalid', 'invalid')->name('invalid')->withoutMiddleware('auth');
+        Route::get('/validate/{tokenValue}', 'validateToken')->name('validateToken'); // Renamed slightly to avoid clash if needed
+        Route::get('/invalid', 'invalid')->name('invalid');
         Route::get('/reject', 'reject')->name('reject');
         Route::get('/conflict', 'conflict')->name('conflict');
         Route::post('/refuse', 'refuse')->name('refuse');
@@ -83,10 +73,11 @@ Route::middleware(['auth', 'isBannedOrDeactive'])->group(function () {
     });
 
     /* Expense Routes */
-
     Route::prefix('expense')->controller(ExpenseController::class)->as( 'expense.')->group(function () {
         Route::post('/', 'store')->name('store');
         Route::put('/{expense}', 'update')->name('update');
         Route::delete('/{expense}', 'destroy')->name('destroy');
     });
 });
+
+require __DIR__.'/auth.php';

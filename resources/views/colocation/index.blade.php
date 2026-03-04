@@ -3,7 +3,7 @@
 @section('title', 'Workspaces | EasyColoc')
 
 @section('content')
-    <main class="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
+    <main class="mx-auto w-full max-w-7xl flex-1 px-6 py-12">
         <div class="flex flex-col gap-12">
             <!-- Session Messages -->
             @if (session()->has('addColocationError'))

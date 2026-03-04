@@ -22,7 +22,7 @@
                         The definitive platform for tracking expenses and managing shared finances. Built for modern housemates who value simplicity and precision.
                     </p>
                     <div class="flex flex-wrap items-center justify-center gap-4">
-                        <a href="{{ route('register.view') }}" class="btn-modern px-10 py-5 text-sm font-bold">
+                        <a href="{{ route('register') }}" class="btn-modern px-10 py-5 text-sm font-bold">
                             Get Started Free
                         </a>
                         <a href="#features" class="btn-outline px-10 py-5 text-sm font-bold">
@@ -67,7 +67,7 @@
                         <h2 class="text-4xl font-display font-bold text-white mb-6">Built for scale, <br/>designed for focus.</h2>
                         <p class="text-neutral-400 font-body">Everything you need to maintain harmony and financial clarity in your shared home.</p>
                     </div>
-                    <a href="{{ route('register.view') }}" class="text-sm font-bold text-white hover:opacity-70 transition-opacity flex items-center gap-2">
+                    <a href="{{ route('register') }}" class="text-sm font-bold text-white hover:opacity-70 transition-opacity flex items-center gap-2">
                         Explore core architecture <span class="material-symbols-outlined text-sm">arrow_forward</span>
                     </a>
                 </div>
@@ -118,10 +118,10 @@
                         Join the next generation of housemates managing their lives with financial clarity.
                     </p>
                     <div class="flex flex-wrap items-center justify-center gap-4">
-                        <a href="{{ route('register.view') }}" class="bg-black text-white px-10 py-5 rounded-xl font-bold hover:scale-[0.98] transition-transform">
+                        <a href="{{ route('register') }}" class="bg-black text-white px-10 py-5 rounded-xl font-bold hover:scale-[0.98] transition-transform">
                             Create Workspace
                         </a>
-                        <a href="{{ route('login.view') }}" class="border border-black/10 px-10 py-5 rounded-xl font-bold hover:bg-black/5 transition-colors">
+                        <a href="{{ route('login') }}" class="border border-black/10 px-10 py-5 rounded-xl font-bold hover:bg-black/5 transition-colors">
                             Member Sign In
                         </a>
                     </div>
